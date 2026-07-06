@@ -1709,7 +1709,7 @@ function showTab(t,btn){
 
 // ── SAVE STATE ─────────────────────────────────────────────
 function copyForClaude(){
-  const data = localStorage.getItem('porosData');
+  const data = localStorage.getItem('poros-cc-v1');
   if(!data){ alert('No saved data found.'); return; }
   navigator.clipboard.writeText(data).then(()=>{
     const btn = document.getElementById('copyClaudeBtn');
@@ -1754,7 +1754,7 @@ function scheduleGistSave(){
 }
 async function pushToGist(){
   if(!ghConfig?.token) return;
-  const data = localStorage.getItem('porosData');
+  const data = localStorage.getItem('poros-cc-v1');
   if(!data) return;
   setGhStatus('⏫ syncing…','#f59e0b');
   const body = { description:'Poros Command Center – auto sync', files:{'poros-data.json':{content:data}} };
