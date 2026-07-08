@@ -1,1 +1,2385 @@
-# POROS
+[index.html](https://github.com/user-attachments/files/29806262/index.html)
+# POROS<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Poros Command Center</title>
+<style>
+:root{--blue:#1a3a5c;--gold:#7db8e8;--cream:#f4f8fd;--sand:#ddeaf7;--dark:#1a3a5c;--text:#2c2c2c;--muted:#888;--green:#2d7a4a;--red:#c0392b;--border:#ddd;--r:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding-bottom:50px}
+@media print{
+  .tab-nav,.site-header .hdr-btns,.modal-ov{display:none!important}
+  .tab-panel{display:block!important}
+  .phase-body{display:block!important}
+  body{background:white}
+  .tab-panel{box-shadow:none;padding:0}
+}
+.site-header{background:white;border-bottom:2px solid #d0e4f7;color:#1a3a5c;padding:10px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.hdr-btns{margin-left:auto;display:flex;gap:6px;flex-shrink:0}
+.hdr-btn{border:1px solid #c0d8ee;background:white;color:#1a3a5c;border-radius:6px;padding:4px 9px;font-size:11px;font-weight:600;cursor:pointer}
+.hdr-btn:hover{background:#e8f4ff}
+.site-logo{flex-shrink:0}
+.site-title h1{font-size:16px;font-weight:800;letter-spacing:1px;color:#1a3a5c}
+.site-title p{font-size:10px;color:#7aabcc;letter-spacing:1px;text-transform:uppercase}
+.site-badge{background:var(--gold);color:var(--dark);font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:1px;margin-left:auto}
+.tab-nav{background:#1a3a5c;display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{flex:none;padding:11px 15px;background:none;border:none;color:#7db8e8;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s}
+.tab-btn.active{color:white;border-bottom-color:#7db8e8;opacity:1}
+.tab-panel{display:none;padding:14px}
+.tab-panel.active{display:block}
+/* Board */
+.board-grid{display:flex;flex-direction:column;gap:8px;padding:12px}
+.board-col{background:white;border-radius:10px;box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:hidden;border:1px solid #eee}
+.board-col-hdr{padding:12px 14px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.board-item{padding:11px 14px;border-top:1px solid #f4f4f4;font-size:14px;display:flex;align-items:center;gap:10px;transition:background .15s}
+.board-item:active{background:#f9fbff}
+.board-item input[type=checkbox]{flex:none;width:18px;height:18px;cursor:pointer;accent-color:#1a3a5c}
+/* Phases */
+.phase-section{margin-bottom:6px}
+.phase-hdr{background:linear-gradient(135deg,#1a3a5c,#2a5a8c);color:white;padding:11px 15px;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;border-radius:var(--r);margin-bottom:3px}
+.phase-hdr .chev{transition:transform .2s}
+.phase-hdr.open .chev{transform:rotate(180deg)}
+.phase-cat-hdr{padding:7px 14px;background:var(--sand);font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between}
+.check-row{display:flex;align-items:flex-start;padding:7px 11px;border-bottom:1px solid #f0f0f0;gap:7px}
+.check-row:last-child{border-bottom:none}
+.check-row input[type=checkbox]{margin-top:3px;flex:none;width:15px;height:15px}
+.item-label{flex:1;font-size:13px;line-height:1.4}
+.item-comment{width:100%;margin-top:5px;font-size:12px;border:1px solid #e0e0e0;border-radius:4px;padding:5px;resize:vertical;min-height:34px;background:#fafafa;font-family:inherit;color:var(--text)}
+.item-actions{display:flex;gap:3px;flex:none}
+.btn-icon{background:none;border:1px solid #ddd;border-radius:6px;padding:6px 10px;font-size:14px;cursor:pointer;color:var(--muted);min-width:36px;min-height:36px;display:inline-flex;align-items:center;justify-content:center;touch-action:manipulation}
+.btn-icon:active{background:#f0f0f0}
+.btn-icon:disabled{opacity:.3;cursor:default}
+/* Meetings */
+.mtg-section{margin-bottom:18px}
+.mtg-sec-title{font-size:15px;font-weight:700;color:var(--blue);margin-bottom:9px;padding-bottom:5px;border-bottom:2px solid var(--blue);display:flex;align-items:center;gap:7px}
+.mtg-add-form{background:white;border-radius:var(--r);padding:11px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);display:flex;flex-wrap:wrap;gap:7px;align-items:flex-end}
+.form-grp{display:flex;flex-direction:column;gap:2px}
+.form-lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase}
+.mtg-select,.mtg-date{border:1px solid #ddd;border-radius:4px;padding:6px 7px;font-size:13px;font-family:inherit;background:white}
+.mtg-card{background:white;border-radius:var(--r);box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:9px;overflow:hidden}
+.mtg-card-hdr{padding:9px 13px;display:flex;align-items:center;gap:7px;background:#f8f8f8;border-bottom:1px solid #eee}
+.mtg-who{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.5px}
+.mtg-who.viki{background:#c0644a}
+.mtg-who.onsite{background:#2d6a4f}
+.mtg-who.architect{background:#2d6a9f}
+.mtg-who.engineer{background:#1a7a7a}
+.mtg-who.accountant{background:#6a3d9a}
+.mtg-who.designer{background:#3a7d44}
+.mtg-who.landscape{background:#5a8a3a}
+.mtg-date-lbl{font-size:12px;color:var(--muted);margin-left:auto}
+.mtg-task-row{display:flex;align-items:flex-start;padding:7px 11px;border-bottom:1px solid #f5f5f5;gap:7px;font-size:13px}
+.mtg-task-row:last-child{border-bottom:none}
+.mtg-task-row input[type=checkbox]{flex:none;margin-top:2px}
+.mtg-task-text{flex:1;line-height:1.4}
+.mtg-task-row.done .mtg-task-text{text-decoration:line-through;color:var(--muted)}
+.mtg-moved-tag{font-size:10px;color:var(--muted);font-style:italic;margin-left:4px}
+.mtg-task-actions{display:flex;gap:3px;flex:none;flex-wrap:wrap}
+.mtask-btn{border:none;border-radius:4px;padding:2px 5px;font-size:11px;cursor:pointer;font-weight:600;color:white}
+.mtask-btn.cross{background:#7a6aaa}
+.mtask-btn.tophase{background:var(--blue)}
+.mtask-btn.tomat{background:#8a6a4a}
+.mtask-btn.del{background:#ddd;color:#666}
+/* Add rows */
+.add-row{display:flex;gap:5px;padding:7px 11px;border-top:1px solid #f0f0f0;background:#fafafa}
+.add-input{flex:1;border:1px solid #ddd;border-radius:4px;padding:6px 7px;font-size:13px;font-family:inherit}
+.btn{background:var(--blue);color:white;border:none;border-radius:4px;padding:7px 13px;font-size:13px;cursor:pointer;font-weight:500}
+.btn:active{opacity:.8}
+.btn-sm{padding:5px 9px;font-size:12px}
+.btn-gold{background:var(--gold);color:var(--dark)}
+/* Materials */
+.mat-item{display:flex;align-items:flex-start;padding:7px 11px;border-bottom:1px solid #f0f0f0;background:white;gap:10px}
+.mat-item:first-child{border-radius:var(--r) var(--r) 0 0}
+.mat-item:last-child{border-bottom:none;border-radius:0 0 var(--r) var(--r)}
+.mat-key{font-weight:600;font-size:13px;min-width:130px;color:var(--blue)}
+.mat-val{font-size:13px}
+.mat-custom-item{display:flex;gap:7px;align-items:center;padding:5px 11px;background:white;border-bottom:1px solid #f0f0f0}
+.mat-inp{flex:1;border:1px solid #ddd;border-radius:4px;padding:5px 7px;font-size:13px;font-family:inherit}
+/* Modal */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.modal-ov.show{display:flex}
+.modal-box{background:white;border-radius:var(--r);padding:18px;width:92%;max-width:380px;max-height:72vh;overflow-y:auto}
+.modal-title{font-size:15px;font-weight:700;margin-bottom:11px;color:var(--blue)}
+.picker-item{padding:9px 11px;border:1px solid #ddd;border-radius:4px;margin-bottom:5px;cursor:pointer;font-size:13px}
+.picker-item:active{background:var(--sand)}
+.sec-title{font-size:14px;font-weight:700;color:var(--blue);margin:14px 0 7px;display:flex;align-items:center;gap:6px}
+@media(max-width:600px){.board-grid{grid-template-columns:1fr}.mtg-add-form{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="site-logo"><img src="data:image/png;base64,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" style="height:52px;width:auto;display:block"></div>
+  <div class="site-title">
+    <h1 style="font-size:15px;letter-spacing:1px;font-weight:800">Lefkada Retreat</h1>
+    <p>Poros · Construction Command Center</p>
+  </div>
+  <div class="hdr-btns">
+    <button class="hdr-btn" onclick="exportPDF()">🖨️ PDF</button>
+    <button class="hdr-btn" onclick="exportState()">💾 Save</button>
+    <button class="hdr-btn" onclick="importState()">📂 Load</button>
+    <button class="hdr-btn" id="ghSyncBtn" onclick="ghSyncOrSetup()" title="Click to sync data to GitHub, long-press to open settings">🔗 Sync</button>
+    <span id="ghStatus" style="font-size:10px;color:#aac;white-space:nowrap;align-self:center;padding:0 4px"></span>
+  </div>
+  <div style="font-size:10px;color:#aac;letter-spacing:1px;text-align:right;white-space:nowrap">v17.06.26</div>
+  <div class="site-badge">2026</div>
+</div>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('board',this)">📋 Board</button>
+  <button class="tab-btn" onclick="showTab('phases',this)">🏗️ Phases</button>
+  <button class="tab-btn" onclick="showTab('materials',this)">📦 Materials</button>
+  <button class="tab-btn" onclick="showTab('meetings',this)">💬 Meetings</button>
+  <button class="tab-btn" onclick="showTab('strategy',this)">🎯 Strategy</button>
+</nav>
+
+<div id="tab-board" class="tab-panel active"><div id="board-container"></div></div>
+<div id="tab-phases" class="tab-panel"><div id="phases-container"></div></div>
+<div id="tab-materials" class="tab-panel"><div id="materials-container"></div></div>
+<div id="tab-meetings" class="tab-panel"><div id="meetings-container"></div></div>
+<div id="tab-strategy" class="tab-panel"><div id="strategy-container"></div></div>
+
+<!-- Phase picker modal -->
+<div class="modal-ov" id="phase-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title">Send to…</div>
+    <div id="modal-list"></div>
+    <button class="btn" style="margin-top:10px;width:100%" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if(typeof pdfjsLib!=='undefined') pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+// ── STATE ──────────────────────────────────────────────────
+const state = {}, comments = {};
+
+// ── PHASE DATA ─────────────────────────────────────────────
+// phaseData[phase][cat] = { label, items[], spots[] }
+const phaseData = {
+  structural: {
+    label: '🏗️ Structural Phase',
+    architect: {
+      label: '🏛️ Architect',
+      items: [
+        'Building permit plans — revise windows, connections between units',
+        'Connection between units for future sale — confirm where it happens',
+        'Interior plans',
+        'Built-in furniture plans — 1st floor closets missing, pergolas',
+        'Outdoor plans',
+        'Hot tub location relative to built-in bench',
+        'Room dimensions match approved plans',
+        'Wall positions match plans',
+        'Wall thickness correct',
+        'Wall niches confirmed',
+        'Ceiling heights confirmed',
+        'Door openings correct size & position',
+        'Window openings correct size & position',
+        'Floor levels checked',
+        'Angles / שיפועים',
+        'Wet areas clearly identified',
+        'Walls straight and square',
+        'Corners clean and aligned',
+        'Floors flat and even',
+        'Expansion joints planned',
+      ],
+      spots: ['A','B','C','D']
+    },
+    constructor: {
+      label: '🏗️ Constructor',
+      items: [
+        'Drainage point on 1st-floor balconies — extremely important for lower unit',
+        'Roof element covering the tiles',
+        'Access to 2nd-floor balconies',
+        'Drainage for hot tub area',
+        'Pump for toilet in basement',
+        'Break extra terrace built in Unit A',
+        'Ensure prep for washing machine under the stairs',
+        'Pool — create 1.50 m depth',
+        'Pool stair solution',
+        '4 lights in the pool',
+        'Pool tiles ordered ✓',
+        'Access D↔C: Unit D for chef, Unit C optional non-rental',
+        'Plumbing points confirmed',
+        'Sink positions confirmed',
+        'Tap type confirmed (wall / counter)',
+        'Shower mixer positions confirmed',
+        'Toilet type & frame installed',
+        'Floor drains positioned',
+        'Hot/cold orientation correct',
+        'Pressure tests completed',
+        'Photos taken before closing walls',
+        'Waterproofing applied in wet areas',
+        'Waterproofing tested',
+      ],
+      spots: ['A','B','C','D']
+    },
+    electricity: {
+      label: '⚡ Electricity',
+      items: [
+        'Interior electrical plans',
+        'Outdoor electrical plans',
+        'Electrical plans first phase — check',
+        'Electrical sockets positioned',
+        'Switch positions confirmed',
+        'Lighting points aligned with layout',
+      ],
+      spots: ['A','B','C','D']
+    },
+    landscape: {
+      label: '🌿 Landscape Architect',
+      items: [
+        'Timeline + outdoor development',
+        'Gardening plans',
+        '⚠️ Cannot go into winter — all outdoor work delayed a year',
+        'Clean weeds — fire regulation requirement',
+        'Check with Arkons whether small plot structure must be elevated',
+        'Simple concrete platform on small plot for temporary use',
+        'Relocate future electrical line on small plot',
+        'Divert stream away from property',
+        'Mark boundaries of neighboring plots',
+        '15 meters from plot boundary confirmed',
+        'Location of gates and fences',
+        'Water tank for irrigation',
+        'Final outdoor shower location',
+      ],
+      spots: []
+    },
+  },
+  middle: {
+    label: '🔧 Middle Phase',
+    architect: {
+      label: '🏛️ Architect',
+      items: [
+        'Arches in the rooms — where will they be implemented?',
+        'Stair railings — how will they be executed?',
+        'Rounded corners on exterior walls',
+        'Rounded corners in niches',
+        'Aluminium profile and color',
+        'Tile size & batch confirmed',
+        'Tile layout approved before install',
+        'Pattern direction confirmed',
+        'No small cuts in visible areas',
+        'Door swing directions correct',
+        'Doors aligned & level',
+        'Cabinets installed as planned',
+        'Cabinets align with plumbing',
+        'Shower glass layout approved',
+        'Shared dining: final dimensions confirmed (~6 m × 9 m)',
+        'Seating for ~28 guests',
+        'Pergola type for dining (option: transparent plastic roofing)',
+        'Studio — area below: retaining wall? Which material?',
+      ],
+      spots: ['A','B','C','D']
+    },
+    constructor: {
+      label: '🏗️ Constructor',
+      items: [
+        'Water tank location per unit + lower area (min. 30 m³)',
+        'Additional water tank for pool filtration — reuse for irrigation',
+        'Pool — staircase design confirmed',
+        'Sinks & taps installed correctly',
+        'Toilets installed & tested',
+        'Slopes maintained in showers',
+        'Grout lines consistent',
+        'Surfaces protected after install',
+        'Outdoor kitchen: sink + tap, hot water',
+        'Outdoor kitchen: space for oven, fridge, storage',
+        'Outdoor kitchen: kitchen island for serving',
+        'Outdoor kitchen: gas cooking preparation',
+        'Shared dining: library, workstation, built-in bench, hand-washing sink',
+        'Music system in dining',
+      ],
+      spots: ['A','B','C','D','dining']
+    },
+    electricity: {
+      label: '⚡ Electricity',
+      items: [
+        'Stair lighting — one wall light fixture per unit',
+        'Separate electrical meters: A+B and C+D',
+        'Boiler timer for each unit',
+        'Verify indoor AC locations',
+        'Outdoor AC compressor locations',
+        'Unit D kitchen — outlet for the oven',
+        'Internet infrastructure (Starlink)',
+        'Electrical + water prep for hot tub in each unit',
+        'Power outlets on every terrace',
+        'Waterproof outlets between buildings and pool area',
+        'Solar panel locations confirmed',
+        'Prepare property for solar electricity',
+        'Solar power infrastructure',
+        'Electrical cabinet in each unit — high enough under stairs',
+        'Ground floor terrace — prep for fans and hot tub',
+        'Rooftop electrical routing — inside or between roof tiles?',
+        '⚠️ Outdoor electricity control OUTSIDE guest units (storage room near studio)',
+        'String lights in dining area',
+        'Hanging light fixtures under pool pergola',
+        'Ceiling fans in pergolas attached to units',
+        'Path lighting poles (Carmey Avdat style)',
+        'Solar-powered lights',
+        'Sound system in studio area',
+        'Charging stations in dining and pool areas',
+        'Ceiling fans in dining and pool areas',
+        'Three-phase electrical for large oven',
+        'Gas preparation',
+        'Sufficient kitchen and dining outlets',
+      ],
+      spots: ['A','B','C','D','pool','studio','dining']
+    },
+    landscape: {
+      label: '🌿 Landscape Architect',
+      items: [
+        'Plant irrigation and drainage',
+        'Water tap near SUP boards',
+        'Drainage and gutters',
+        'Tiles for outside paths — natural look',
+        'Upper and lower entrances confirmed',
+        'Perimeter fencing — material selection',
+        'Natural stone paving between units',
+        'Minibus access confirmed',
+        'Parking entrance and exit design',
+        'Pathway wide enough for golf cart (2.5 m)',
+        'Accessibility plan',
+        'Plaza near parking: built-in benches + bell for assistance',
+      ],
+      spots: []
+    },
+  },
+  finishing: {
+    label: '✨ Finishing Phase',
+    architect: {
+      label: '🏛️ Architect',
+      items: [
+        'Built-in wardrobes — layout for luggage trolleys + hanging space',
+        'Built-in kitchen — shelf layout, drawers, wall shelves for cups',
+        'Built-in sofa — shelving on back side facing kitchen',
+        'Kitchen in Unit D',
+        'Storage cabinets — door material + locks/keys for housekeeping',
+        'Close space underneath the stairs',
+        'Amphitheater: location and dimensions confirmed',
+        'Amphitheater: plan with benches using existing property stones',
+        'Studio: glass walls, curtain hanging system',
+        'Studio: angled pergola for additional shade',
+        'Studio: access paths — kitchen → studio → toilet',
+        'Studio: final dimensions confirmed',
+        'Defects list agreed',
+        'Manuals & warranties received',
+        'Spare materials handed over',
+      ],
+      spots: ['A','B','C','D','studio']
+    },
+    constructor: {
+      label: '🏗️ Constructor',
+      items: [
+        'Pool: low-chlorine / magnesium system installed',
+        'Pool: quiet filtration pump',
+        'Pool tiles installed',
+        'Studio: waterproof roof',
+        'Studio: deck preparation',
+        'Studio: pergola waterproofed against rain',
+        'Studio: steel supports for hanging hammocks',
+        'Studio: two AC units installed',
+        'Studio: stair dimensions confirmed (height and depth)',
+        'Remove built structure from plans + confirm cost',
+        'SUP Platform: dimensions confirmed',
+        'SUP Platform: space for SUP cover',
+        'SUP Platform: water tap for rinsing legs',
+        'Silicone clean & neat',
+        'Paint touch-ups completed',
+        'Final cleaning completed',
+        'Plumbing fully tested',
+        'Drainage working',
+      ],
+      spots: ['A','B','C','D','pool','studio']
+    },
+    electricity: {
+      label: '⚡ Electricity',
+      items: [
+        'Lighting working — all units',
+        'Ventilation working',
+        'Studio: roof shading + lighting solution',
+        'Music system installed',
+      ],
+      spots: ['A','B','C','D','studio']
+    },
+    landscape: {
+      label: '🌿 Landscape Architect',
+      items: [
+        'Landscaping around buildings — olive trees, built-in planters',
+        'Landscaping at entrance, parking, pool, theater, and studio',
+        'Landscaping below studio',
+        'Landscaping throughout built areas',
+        'Landscaping around pool',
+        'Landscaping terraces wherever possible',
+        'Outdoor shower final position',
+      ],
+      spots: ['pool','studio','amphitheater']
+    },
+  },
+};
+
+function initState() {
+  for (const ph in phaseData) {
+    for (const cat in phaseData[ph]) {
+      if (cat === 'label') continue;
+      const sid = ph+'-'+cat;
+      const n = phaseData[ph][cat].items.length;
+      if (!state[sid]) state[sid] = Array(n).fill(false);
+      if (!comments[sid]) comments[sid] = Array(n).fill('');
+    }
+  }
+}
+
+// ── FIX LIST ───────────────────────────────────────────────
+let fixList={};   // fixList[sid] = [{id,text,done}]
+let flNextId=1;
+function flSid(ph,cat){return ph+'-'+cat;}
+function initFixList(){
+  for(const ph in phaseData){
+    const sid='fl-'+ph;
+    if(!fixList[sid]) fixList[sid]=[];
+  }
+}
+
+// ── BOARD ──────────────────────────────────────────────────
+let boardItems = [];
+let boardNextId = 1;
+
+function renderBoard(){
+  const today = new Date().toISOString().slice(0,10);
+  const open = boardItems.filter(i=>!i.done).sort((a,b)=>(a.date||'9999')>(b.date||'9999')?1:-1);
+  const done = boardItems.filter(i=>i.done);
+
+  const formatDate = d => {
+    if(!d) return '';
+    const diff = Math.round((new Date(d)-new Date(today))/(1000*60*60*24));
+    if(diff<0) return `<span style="color:#c0392b;font-size:11px;font-weight:700">⚠ Overdue · ${d}</span>`;
+    if(diff===0) return `<span style="color:#e67e22;font-size:11px;font-weight:700">Today</span>`;
+    if(diff===1) return `<span style="color:#e67e22;font-size:11px">Tomorrow</span>`;
+    return `<span style="color:#7db8e8;font-size:11px">📅 ${d}</span>`;
+  };
+
+  const row = it => `<div class="board-item" style="align-items:flex-start;${it.done?'opacity:.4':''}">
+    <input type="checkbox" ${it.done?'checked':''} onchange="toggleBoard(${it.id})" style="width:20px;height:20px;flex-shrink:0;cursor:pointer;accent-color:#1a3a5c;margin-top:2px">
+    <div style="flex:1;min-width:0">
+      <div style="font-size:15px;${it.done?'text-decoration:line-through;color:#aaa':''}">${it.text}</div>
+      ${it.date?`<div style="margin-top:2px">${formatDate(it.date)}</div>`:''}
+    </div>
+    <button onclick="delBoard(${it.id})" style="background:none;border:none;font-size:20px;cursor:pointer;padding:2px 4px;color:#ddd;flex-shrink:0">×</button>
+  </div>`;
+
+  let h = `<div style="padding:12px;max-width:600px;margin:0 auto">
+    <div style="background:white;border-radius:12px;padding:12px;box-shadow:0 1px 6px rgba(0,0,0,.07);margin-bottom:14px">
+      <input id="board-new" type="text" placeholder="What do I need to handle…"
+        onkeydown="if(event.key==='Enter')addBoard()"
+        style="width:100%;font-size:15px;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-family:inherit;box-sizing:border-box;margin-bottom:8px">
+      <div style="display:flex;gap:8px;align-items:center">
+        <label style="font-size:12px;color:#888;white-space:nowrap">Due date</label>
+        <input id="board-date" type="date" style="flex:1;font-size:13px;padding:8px 10px;border:1px solid #ddd;border-radius:8px;color:#555">
+        <button onclick="addBoard()" style="background:#1a3a5c;color:white;border:none;border-radius:8px;padding:9px 18px;font-size:20px;font-weight:700;cursor:pointer;touch-action:manipulation">+</button>
+      </div>
+    </div>`;
+
+  if(open.length){
+    h+=`<div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">To Handle (${open.length})</div>`;
+    open.forEach(it=>{ h+=row(it); });
+  }
+  if(done.length){
+    h+=`<div style="font-size:11px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px">Done (${done.length}) <button onclick="clearDoneBoard()" style="background:none;border:none;color:#ccc;font-size:11px;cursor:pointer;margin-left:6px">Clear</button></div>`;
+    done.forEach(it=>{ h+=row(it); });
+  }
+  if(boardItems.length===0){
+    h+=`<div style="text-align:center;padding:40px 20px;color:#ccc;font-size:14px">Add your first reminder above</div>`;
+  }
+  h+='</div>';
+  document.getElementById('board-container').innerHTML=h;
+}
+
+function toggleBoard(id){const i=boardItems.find(x=>x.id===id);if(i)i.done=!i.done;renderBoard();}
+function delBoard(id){boardItems=boardItems.filter(x=>x.id!==id);renderBoard();}
+function clearDoneBoard(){boardItems=boardItems.filter(x=>!x.done);renderBoard();}
+function addBoard(){
+  const el=document.getElementById('board-new');
+  const dateEl=document.getElementById('board-date');
+  const t=el.value.trim(); if(!t)return;
+  boardItems.unshift({id:boardNextId++,text:t,date:dateEl?dateEl.value:'',done:false});
+  el.value=''; if(dateEl)dateEl.value='';
+  renderBoard();
+  setTimeout(()=>{const e=document.getElementById('board-new');if(e)e.focus();},50);
+}
+
+// ── PHASES ─────────────────────────────────────────────────
+const phaseOpen = {};
+function renderPhases(){
+  let h='';
+  for(const ph in phaseData){
+    const pd=phaseData[ph];
+    const open=phaseOpen[ph]===true;
+    h+=`<div class="phase-section">
+      <div class="phase-hdr ${open?'open':''}" onclick="togglePh('${ph}')">
+        <span>${pd.label}</span><span class="chev">▾</span>
+      </div>
+      <div id="phb-${ph}" ${open?'':'style="display:none"'}>`;
+    for(const cat in pd){
+      if(cat==='label')continue;
+      const cd=pd[cat]; const sid=ph+'-'+cat;
+      if(!state[sid])state[sid]=Array(cd.items.length).fill(false);
+      if(!comments[sid])comments[sid]=Array(cd.items.length).fill('');
+      const done=state[sid].filter(Boolean).length;
+      h+=`<div class="phase-cat-hdr" style="cursor:pointer;display:flex;align-items:center">
+        <span style="display:flex;align-items:center;gap:6px;flex:1" onclick="toggleCat('${sid}')">
+          <span id="cat-chev-${sid}" style="font-size:11px;color:#aaa">▶</span>
+          ${cd.label}
+        </span>
+        <button onclick="event.stopPropagation();downloadCatPDF('${ph}','${cat}')" style="background:#e8f0fa;border:none;border-radius:5px;color:#1a3a5c;font-size:11px;padding:3px 8px;cursor:pointer;margin-right:8px">📥 PDF</button>
+        <span style="color:${done===cd.items.length?'#2d7a4a':'#888'}" onclick="toggleCat('${sid}')">${done}/${cd.items.length}</span>
+      </div>
+      <div id="cat-body-${sid}" style="display:none;background:white">`;
+      cd.items.forEach((item,i)=>{
+        const isDone=state[sid][i];
+        h+=`<div class="check-row" draggable="true"
+          ondragstart="dragPhStart(event,'${ph}','${cat}',${i})"
+          ondragover="dragPhOver(event,this)"
+          ondragleave="this.style.borderTop=''"
+          ondrop="dropPhTask(event,'${ph}','${cat}',${i})">
+          <span style="cursor:grab;color:#bbb;font-size:18px;padding:0 6px 0 2px;user-select:none" title="Drag to reorder">⠿</span>
+          <input type="checkbox" ${isDone?'checked':''} onchange="togglePhItem('${ph}','${cat}',${i})">
+          <div id="phit-${sid}-${i}" style="flex:1;display:flex;align-items:center">
+            <span style="${isDone?'text-decoration:line-through;color:#999;':''}font-size:13px">${item}</span>
+          </div>
+          <div class="item-actions">
+            <button class="btn-icon" onclick="editPhItem('${ph}','${cat}',${i})" title="Edit">✏️</button>
+            <button class="btn-icon" onclick="event.stopPropagation();showMoveMenu('${ph}','${cat}',${i},this)" title="Move to category">↗</button>
+            <button class="btn-icon" onclick="phToMtg('${ph}','${cat}',${i})" title="Send to meeting">📋</button>
+          </div>
+        </div>`;
+      });
+      h+=`<div class="add-row">
+        <input class="add-input" id="pa-${sid}" type="text" placeholder="Add item…" onkeydown="if(event.key==='Enter')addPhItem('${ph}','${cat}')">
+        <button class="btn btn-sm" onclick="addPhItem('${ph}','${cat}')">+</button>
+      </div></div>`;
+    }
+    // ── PHASE PHOTOS ──
+    const pphotos=phasePhotos[ph]||[];
+    const ppOpen=phasePhotos['_open_'+ph]!==false;
+    h+=`<div style="border-top:3px solid #0ea5e9;margin-top:6px">
+      <div onclick="togglePhPhotos('${ph}')" style="display:flex;align-items:center;gap:6px;padding:9px 13px;background:#f0f9ff;cursor:pointer;font-size:13px;font-weight:700;color:#0369a1">
+        <span style="flex:1">📷 Phase Photos ${pphotos.length?`(${pphotos.length})`:'(none)'}</span>
+        <label onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:3px;background:#0369a1;color:white;border-radius:5px;padding:3px 10px;font-size:11px;font-weight:600;cursor:pointer">+ Upload<input type="file" accept="image/*" multiple style="display:none" onchange="uploadPhasePhoto('${ph}',this)"></label>
+        <span style="margin-left:4px">${ppOpen?'▼':'▶'}</span>
+      </div>
+      <div id="pp-body-${ph}" style="${ppOpen?'':'display:none;'}padding:${pphotos.length?'10px 13px':'0'};background:#f8fbff">`;
+    if(pphotos.length){
+      h+='<div style="display:flex;flex-wrap:wrap;gap:10px">';
+      pphotos.forEach((f,fi)=>{
+        const isImg=f.type&&f.type.startsWith('image/');
+        const thumb=isImg?`<img src="${f.dataUrl}" onclick="openPhasePhoto('${ph}',${fi})" style="width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid #bae6fd">`
+          :`<div onclick="openPhasePhoto('${ph}',${fi})" style="width:80px;height:80px;display:flex;align-items:center;justify-content:center;background:#e0f2fe;border-radius:6px;cursor:pointer;font-size:28px;border:2px solid #bae6fd">📄</div>`;
+        h+=`<div style="position:relative;display:inline-block">
+          ${thumb}
+          <button onclick="delPhasePhoto('${ph}',${fi})" style="position:absolute;top:-5px;right:-5px;background:#dc2626;color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">×</button>
+          <div style="font-size:10px;color:#555;text-align:center;margin-top:3px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.name}</div>
+        </div>`;
+      });
+      h+='</div>';
+    }
+    h+='</div></div>';
+    // ── FIX LIST for this phase ──
+    const flSid='fl-'+ph;
+    const fl=fixList[flSid]||[];
+    const flDone=fl.filter(x=>x.done).length;
+    const flOpen=fixList['_open_'+flSid]!==false;
+    h+=`<div style="border-top:3px solid #f59e0b;margin-top:6px">
+      <div onclick="toggleFlSec('${flSid}')" style="display:flex;align-items:center;gap:6px;padding:9px 13px;background:#fffbeb;cursor:pointer;font-size:13px;font-weight:700;color:#92400e">
+        <span style="flex:1">🔧 Fix List ${fl.length?`— ${flDone}/${fl.length} done`:'(empty)'}</span>
+        <span>${flOpen?'▼':'▶'}</span>
+      </div>
+      <div id="fl-body-${flSid}" style="${flOpen?'':'display:none'}">`;
+    fl.forEach((item,i)=>{
+      h+=`<div style="display:flex;align-items:center;gap:6px;padding:6px 13px;background:${item.done?'#fef3c7':'#fffde7'};border-bottom:1px solid #fde68a">
+        <input type="checkbox" ${item.done?'checked':''} onchange="togFlItem('${flSid}',${i})">
+        <span style="flex:1;font-size:13px;${item.done?'text-decoration:line-through;color:#aaa':''}">${item.text}</span>
+        <button class="mtask-btn tophase" onclick="flToMtg('${flSid}',${i})">→ Mtg</button>
+        <button class="mtask-btn del" onclick="delFlItem('${flSid}',${i})">×</button>
+      </div>`;
+    });
+    h+=`<div class="add-row" style="background:#fffde7">
+      <input class="add-input" id="fla-${flSid}" type="text" placeholder="Add fix item…" onkeydown="if(event.key==='Enter')addFlItem('${flSid}')">
+      <button class="btn btn-sm" onclick="addFlItem('${flSid}')">+</button>
+    </div></div></div>`;
+    h+='</div></div>';
+  }
+  document.getElementById('phases-container').innerHTML=h;
+}
+function togglePhPhotos(ph){
+  phasePhotos['_open_'+ph]=phasePhotos['_open_'+ph]===false?true:false;
+  const b=document.getElementById('pp-body-'+ph);
+  if(b) b.style.display=phasePhotos['_open_'+ph]===false?'none':'';
+}
+function toggleCat(sid){
+  const body=document.getElementById('cat-body-'+sid);
+  const chev=document.getElementById('cat-chev-'+sid);
+  if(!body) return;
+  const open=body.style.display!=='none';
+  body.style.display=open?'none':'block';
+  if(chev) chev.textContent=open?'▶':'▼';
+}
+function togglePh(ph){
+  phaseOpen[ph]=!phaseOpen[ph];
+  const b=document.getElementById('phb-'+ph);
+  b.style.display=phaseOpen[ph]?'':'none';
+  b.previousElementSibling.classList.toggle('open',phaseOpen[ph]);
+}
+function togglePhItem(ph,cat,i){const sid=ph+'-'+cat;state[sid][i]=!state[sid][i];renderPhases();}
+function setComment(ph,cat,i,v){comments[ph+'-'+cat][i]=v;}
+function editPhItem(ph,cat,i){
+  const sid=ph+'-'+cat;
+  const el=document.getElementById('phit-'+sid+'-'+i); if(!el)return;
+  const row=el.closest('[draggable]');
+  if(row) row.setAttribute('draggable','false');
+  const old=phaseData[ph][cat].items[i];
+  el.innerHTML=`<input type="text" value="${old.replace(/"/g,'&quot;')}" id="phie-${sid}-${i}"
+    style="flex:1;font-size:13px;padding:2px 6px;border:1px solid #aaa;border-radius:4px;width:100%"
+    onkeydown="if(event.key==='Enter')savePhItem('${ph}','${cat}',${i});if(event.key==='Escape')renderPhases()"
+    onblur="savePhItem('${ph}','${cat}',${i})">`;
+  const inp=document.getElementById('phie-'+sid+'-'+i);
+  if(inp){inp.focus();inp.select();}
+}
+function savePhItem(ph,cat,i){
+  const sid=ph+'-'+cat;
+  const inp=document.getElementById('phie-'+sid+'-'+i); if(!inp)return;
+  const val=inp.value.trim(); if(!val)return;
+  phaseData[ph][cat].items[i]=val;
+  renderPhases();
+}
+
+// ── FIX LIST FUNCTIONS ─────────────────────────────────────
+function toggleFlSec(sid){
+  fixList['_open_'+sid]=fixList['_open_'+sid]===false?true:false;
+  renderPhases();
+}
+function addFlItem(sid){
+  const inp=document.getElementById('fla-'+sid); if(!inp)return;
+  const txt=inp.value.trim(); if(!txt)return;
+  if(!fixList[sid])fixList[sid]=[];
+  fixList[sid].push({id:flNextId++,text:txt,done:false});
+  inp.value=''; renderPhases();
+}
+function togFlItem(sid,i){
+  if(fixList[sid]&&fixList[sid][i]) fixList[sid][i].done=!fixList[sid][i].done;
+  renderPhases();
+}
+function delFlItem(sid,i){
+  if(fixList[sid]) fixList[sid].splice(i,1);
+  renderPhases();
+}
+function flToMtg(sid,i){
+  const item=fixList[sid]&&fixList[sid][i]; if(!item)return;
+  _pendingText=item.text;
+  document.getElementById('modal-title').textContent='Copy to Meeting';
+  let h='';
+  meetings.forEach(m=>{
+    const ico=m.meetType==='lefkada'?'🏡':'🏢';
+    h+=`<div class="picker-item" onclick="addTextToMeeting(${m.id},'${item.text.replace(/'/g,"\\'")}')">
+      ${ico} ${whoLabels[m.who]||m.who} — ${m.date}
+    </div>`;
+  });
+  if(!meetings.length) h='<p style="color:#aaa;font-size:13px">No meetings yet.</p>';
+  document.getElementById('modal-list').innerHTML=h;
+  document.getElementById('phase-modal').classList.add('show');
+}
+function addTextToMeeting(mid,text){
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  m.tasks.push({id:mtgTid++,text,done:false,movedTo:null});
+  document.getElementById('phase-modal').classList.remove('show');
+  renderMeetings();
+}
+function mtgTaskToFl(mid,tid){
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  const t=m.tasks.find(x=>x.id===tid); if(!t)return;
+  document.getElementById('modal-title').textContent='Add to Fix List';
+  let h='';
+  for(const ph in phaseData){
+    const sid='fl-'+ph;
+    h+=`<div class="picker-item" onclick="addToFlFromMtg('${sid}','${t.text.replace(/'/g,"\\'")}')">
+      ${phaseData[ph].label}
+    </div>`;
+  }
+  document.getElementById('modal-list').innerHTML=h;
+  document.getElementById('phase-modal').classList.add('show');
+}
+function addToFlFromMtg(sid,text){
+  if(!fixList[sid])fixList[sid]=[];
+  fixList[sid].push({id:flNextId++,text,done:false});
+  document.getElementById('phase-modal').classList.remove('show');
+  renderPhases();
+}
+
+function showMoveMenu(ph,cat,i,btn){
+  document.querySelectorAll('.move-menu').forEach(m=>m.remove());
+  const menu=document.createElement('div');
+  menu.className='move-menu';
+  menu.style.cssText='position:absolute;background:white;border:1px solid #ddd;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:9999;min-width:180px;padding:4px 0';
+  let html='<div style="font-size:11px;color:#888;padding:6px 12px 4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Move to</div>';
+  for(const tPh in phaseData){
+    for(const tCat in phaseData[tPh]){
+      if(tCat==='label') continue;
+      if(tPh===ph && tCat===cat) continue;
+      const cd=phaseData[tPh][tCat];
+      html+=`<div onclick="movePhItem('${ph}','${cat}',${i},'${tPh}','${tCat}')" style="padding:8px 14px;cursor:pointer;font-size:13px;display:flex;gap:6px;align-items:center" onmouseover="this.style.background='#f4f8fd'" onmouseout="this.style.background=''">
+        <span style="font-size:10px;color:#aaa">${phaseData[tPh].label.replace(/🏗️|🔧|✨/g,'').trim()}</span>
+        <span>${cd.label}</span>
+      </div>`;
+    }
+  }
+  menu.innerHTML=html;
+  const rect=btn.getBoundingClientRect();
+  menu.style.top=(rect.bottom+window.scrollY+4)+'px';
+  menu.style.left=Math.max(4,rect.left+window.scrollX-100)+'px';
+  document.body.appendChild(menu);
+  setTimeout(()=>document.addEventListener('click',()=>menu.remove(),{once:true}),10);
+}
+
+function movePhItem(fromPh,fromCat,i,toPh,toCat){
+  document.querySelectorAll('.move-menu').forEach(m=>m.remove());
+  const fromSid=fromPh+'-'+fromCat, toSid=toPh+'-'+toCat;
+  const text=phaseData[fromPh][fromCat].items[i];
+  const done=state[fromSid][i];
+  const note=comments[fromSid][i]||'';
+  phaseData[fromPh][fromCat].items.splice(i,1);
+  state[fromSid].splice(i,1);
+  comments[fromSid].splice(i,1);
+  if(!phaseData[toPh][toCat].items) phaseData[toPh][toCat].items=[];
+  if(!state[toSid]) state[toSid]=[];
+  if(!comments[toSid]) comments[toSid]=[];
+  phaseData[toPh][toCat].items.push(text);
+  state[toSid].push(done);
+  comments[toSid].push(note);
+  renderPhases();
+}
+function reorder(ph,cat,fi,ti){
+  const cd=phaseData[ph][cat]; if(ti<0||ti>=cd.items.length)return;
+  const sid=ph+'-'+cat;
+  function mv(a){if(!a||a.length<2)return;const[m]=a.splice(fi,1);a.splice(ti,0,m);}
+  mv(cd.items);mv(state[sid]);mv(comments[sid]);
+  renderPhases();
+}
+function addPhItem(ph,cat){
+  const sid=ph+'-'+cat; const el=document.getElementById('pa-'+sid);
+  const t=el.value.trim(); if(!t)return;
+  phaseData[ph][cat].items.push(t); state[sid].push(false); comments[sid].push('');
+  el.value=''; renderPhases();
+}
+function phToMtg(ph,cat,i){
+  _pendingText=phaseData[ph][cat].items[i]; _pendingCB=null;
+  showMtgPicker();
+}
+
+// ── MODAL / PICKERS ────────────────────────────────────────
+let _pendingText='', _pendingCB=null;
+
+function showMtgPicker(){
+  document.getElementById('modal-title').textContent='Send to Meeting';
+  let h='';
+  meetings.forEach(m=>{
+    const ico=m.meetType==='lefkada'?'🏡':'🏢';
+    h+=`<div class="picker-item" onclick="addTaskToMeeting(${m.id})">${ico} ${whoLabels[m.who]||m.who} — ${m.date}</div>`;
+  });
+  if(!meetings.length) h='<p style="color:#aaa;font-size:13px">No meetings yet. Create one in the Meetings tab.</p>';
+  document.getElementById('modal-list').innerHTML=h;
+  document.getElementById('phase-modal').classList.add('show');
+}
+
+function showPhasePicker(cb){
+  document.getElementById('modal-title').textContent='Send to Phase';
+  _pendingCB=cb;
+  let h='';
+  for(const ph in phaseData){
+    for(const cat in phaseData[ph]){
+      if(cat==='label')continue;
+      h+=`<div class="picker-item" onclick="pickPhase('${ph}','${cat}')">${phaseData[ph].label} › ${phaseData[ph][cat].label}</div>`;
+    }
+  }
+  document.getElementById('modal-list').innerHTML=h;
+  document.getElementById('phase-modal').classList.add('show');
+}
+
+function addTaskToMeeting(mid){
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  m.tasks.push({id:mtgTid++,text:_pendingText,done:false,movedTo:null});
+  closeModal(); renderMeetings();
+}
+
+function pickPhase(ph,cat){
+  const sid=ph+'-'+cat;
+  phaseData[ph][cat].items.push(_pendingText);
+  state[sid].push(false); comments[sid].push('');
+  if(_pendingCB) _pendingCB(ph,cat);
+  closeModal(); renderMeetings();
+}
+
+function closeModal(){document.getElementById('phase-modal').classList.remove('show');}
+
+// ── MEETINGS ───────────────────────────────────────────────
+const whoLabels = {
+  viki:'Viki Meeting', onsite:'Project Onsite',
+  architect:'Architect', landscape:'Landscape Architect', engineer:'Engineer',
+  accountant:'Accountant', designer:'Interior Designer',
+  lefkada:'Lefkada Meeting'
+};
+
+let meetings = [
+  {
+    id:5, who:'architect', date:'2026-06-18', meetType:'weekly',
+    tasks:[
+      {id:43, text:'Exterior landscaping plan – his responsibility', done:false, movedTo:null},
+      {id:44, text:'Urgent: renderings / visualizations', done:false, movedTo:null},
+      {id:45, text:'Materials – present inspiration and reference images', done:false, movedTo:null},
+      {id:46, text:'Changes between permit plans and actual construction plans – does he know? (e.g. 3m-high exterior stone wall)', done:false, movedTo:null},
+      {id:47, text:'Entrance areas and front section of each unit – how will level changes/elevations be created?', done:false, movedTo:null},
+      {id:48, text:'Built-in outdoor planters including around pool area – who designs? Including drainage and irrigation', done:false, movedTo:null},
+      {id:49, text:'[Materials] Review and update material selections', done:false, movedTo:null},
+      {id:50, text:'[Materials] Stair railing: not concrete blocks – decide on material (e.g. bamboo)', done:false, movedTo:null},
+      {id:51, text:'[Materials] Request a sample tile from each supplier/store', done:false, movedTo:null},
+      {id:52, text:'[Materials] Send reference images: pool steps, steps to studio, staircase design, tile color options', done:false, movedTo:null},
+      {id:53, text:'[Request] Updated renderings/visualizations', done:false, movedTo:null},
+      {id:54, text:'[Open] Roof design', done:false, movedTo:null},
+      {id:55, text:'[Open] Connection between units (future sale considerations)', done:false, movedTo:null},
+      {id:56, text:'[Open] Materials for stairs – finish examples and exterior tiles', done:false, movedTo:null},
+      {id:57, text:'[Open] Stair railing', done:false, movedTo:null},
+      {id:58, text:'[Open] Exterior landscaping', done:false, movedTo:null},
+      {id:59, text:'[Open] Entrance to each unit – how will ventilation be handled?', done:false, movedTo:null},
+    ]
+  },
+  {
+    id:1, who:'viki', date:'2026-06-13', meetType:'weekly',
+    tasks:[
+      {id:1,  text:'Timeline: C+D — confirm 30/6 concrete completion will happen', done:false, movedTo:null},
+      {id:2,  text:'A+B buildings LATE — escalate roofs, walls, 1st phase electrical/plumbing/HVAC', done:false, movedTo:null},
+      {id:3,  text:'Verify all electrical points in correct position before closing walls', done:false, movedTo:null},
+      {id:4,  text:'Toilet inner cistern — confirm NOT in middle of window', done:false, movedTo:null},
+      {id:5,  text:'Coating stage: AQUAMAT (3 layers), thermal insulation, black membrane — clarify process', done:false, movedTo:null},
+      {id:6,  text:'Choose exterior color and finish type', done:false, movedTo:null},
+      {id:7,  text:'Request photos of ALL areas (not just 4-6) before closing walls', done:false, movedTo:null},
+      {id:8,  text:'Print electricity plans for Monday 22/6 meeting', done:false, movedTo:null},
+      {id:9,  text:'Follow up Vaso — 2 emails sent Wednesday, waiting for response', done:false, movedTo:null},
+      {id:10, text:'Assign one person responsible for recording & implementing all requests', done:false, movedTo:null},
+      {id:11, text:'Extra costs — confirm nothing approved yet, align on approval process', done:false, movedTo:null},
+      {id:12, text:'Internet contractor visit — confirm next week', done:false, movedTo:null},
+      {id:13, text:'Bushes in plot — clean for exterior/landscaping plans', done:false, movedTo:null},
+      {id:14, text:'Next week: in-person Lefkada meeting — see aluminium and coating in person', done:false, movedTo:null},
+      {id:15, text:'Ask contractor to explain all next stages and decisions needed', done:false, movedTo:null},
+    ]
+  },
+  {
+    id:2, who:'onsite', date:'2026-06-18', meetType:'lefkada',
+    tasks:[
+      {id:16, text:'Check the project according to the document', done:false, movedTo:null},
+      {id:17, text:'Take a tape measure', done:false, movedTo:null},
+      {id:18, text:'Check the data on the ground against the document list for inspection', done:false, movedTo:null},
+      {id:19, text:'Check the power cable for the small plot', done:false, movedTo:null},
+      {id:20, text:'Construction schedule - cannot go into winter, all will be delayed a year', done:false, movedTo:null},
+      {id:21, text:'Cleaning for the weed - fire regulation', done:false, movedTo:null},
+      {id:22, text:'Small Plot', done:false, movedTo:null},
+      {id:23, text:'Boundaries of the project', done:false, movedTo:null},
+      {id:24, text:'Parking entrances and paths', done:false, movedTo:null},
+      {id:25, text:'Studio area - studio, kitchen, dining', done:false, movedTo:null},
+      {id:26, text:'Amphitheater', done:false, movedTo:null},
+      {id:27, text:'SUP board platform', done:false, movedTo:null},
+      {id:28, text:'Landscaping', done:false, movedTo:null},
+    ]
+  },
+  {
+    id:3, who:'viki', date:'2026-06-18', meetType:'lefkada',
+    tasks:[
+      {id:29, text:'Project schedule - Are we on track?', done:false, movedTo:null},
+      {id:30, text:'Printed plans - interior + built furniture + electricity including air conditioners and recent changes', done:false, movedTo:null},
+      {id:31, text:'Decisions about materials only with my approval - How the process works', done:false, movedTo:null},
+      {id:32, text:'Weekly report with photos', done:false, movedTo:null},
+      {id:33, text:'Something you can communicate with', done:false, movedTo:null},
+      {id:34, text:'Completion of plans - exterior + exterior electricity - who is doing it', done:false, movedTo:null},
+      {id:35, text:'Finances - When is the next payment. Need to prepare money. Payment schedule is important.', done:false, movedTo:null},
+      {id:36, text:'Invoice', done:false, movedTo:null},
+      {id:37, text:'Landscape Architect', done:false, movedTo:null},
+      {id:38, text:'The Road to a Project to Fix', done:false, movedTo:null},
+      {id:39, text:'Camera Not Working', done:false, movedTo:null},
+    ]
+  },
+  {
+    id:4, who:'accountant', date:'2026-06-18', meetType:'lefkada',
+    tasks:[
+      {id:40, text:'Fotini - Check electricity and water for the plot', done:false, movedTo:null},
+      {id:41, text:'Anthi - May Invoice', done:false, movedTo:null},
+      {id:42, text:'Anthi - Next invoice: Reduce 600 Euros of the tax paid from the last invoice', done:false, movedTo:null},
+    ]
+  }
+];
+let mtgNextId=6, mtgTid=60;
+
+function renderMeetings(){
+  const lef=meetings.filter(m=>m.meetType==='lefkada');
+  const wkl=meetings.filter(m=>m.meetType==='weekly');
+  const form=(suf,label)=>`
+    <div style="display:flex;gap:6px;align-items:center;padding:6px 10px;background:#f4f8fd;border-radius:8px;margin-bottom:8px;flex-wrap:wrap">
+      <select class="mtg-select" id="mw-${suf}" style="font-size:12px;padding:4px 6px;border:1px solid #ddd;border-radius:6px;flex:1;min-width:110px">
+        <option value="viki">Viki</option>
+        <option value="onsite">Project Onsite</option>
+        <option value="architect">Architect</option>
+        <option value="landscape">Landscape Architect</option>
+        <option value="engineer">Engineer</option>
+        <option value="accountant">Accountant</option>
+        <option value="designer">Interior Designer</option>
+      </select>
+      <input class="mtg-date" type="date" id="md-${suf}" value="${todayStr()}" style="font-size:12px;padding:4px 6px;border:1px solid #ddd;border-radius:6px">
+      <button class="btn btn-sm" onclick="addMtg('${suf==='lef'?'lefkada':'weekly'}')" style="white-space:nowrap">+ Add</button>
+    </div>`;
+
+  let h=`<div class="mtg-section">
+    <div class="mtg-sec-title">🏡 Lefkada Meetings</div>
+    ${form('lef')}`;
+  if(!lef.length) h+='<div style="color:#bbb;font-size:13px;text-align:center;padding:14px">No Lefkada meetings yet</div>';
+  lef.forEach(m=>h+=renderMtgCard(m));
+  h+=`</div><div class="mtg-section">
+    <div class="mtg-sec-title">📞 Office Meetings</div>
+    ${form('wkl')}`;
+  wkl.forEach(m=>h+=renderMtgCard(m));
+  h+='</div>';
+  document.getElementById('meetings-container').innerHTML=h;
+}
+
+function toggleMtgBody(id){
+  const el=document.getElementById('mtg-body-'+id);
+  const btn=document.getElementById('mtg-tog-'+id);
+  if(!el) return;
+  const open=el.style.display!=='none';
+  el.style.display=open?'none':'block';
+  btn.textContent=open?'▶':'▼';
+}
+
+function renderMtgCard(m){
+  const done=m.tasks.filter(t=>t.done).length;
+  const total=m.tasks.length;
+  let h=`<div class="mtg-card">
+    <div class="mtg-card-hdr" onclick="toggleMtgBody(${m.id})" style="cursor:pointer">
+      <button id="mtg-tog-${m.id}" style="background:none;border:none;font-size:12px;color:#888;padding:0;margin-right:4px;cursor:pointer">▼</button>
+      <span class="mtg-who ${m.who}">${whoLabels[m.who]||m.who}</span>
+      <input type="date" value="${m.date}" class="mtg-date-lbl" style="border:none;background:transparent;font-size:12px;color:var(--muted);cursor:pointer;padding:0;font-family:inherit" onclick="event.stopPropagation()" onchange="event.stopPropagation();updateMtgDate(${m.id},this.value)">
+      <span style="font-size:11px;color:#aaa;margin-left:6px">${done}/${total}</span>
+      <button class="btn-icon" style="margin-left:auto" onclick="event.stopPropagation();delMtg(${m.id})">×</button>
+      <button id="sumBtn-${m.id}" class="hdr-btn" style="margin-left:4px;font-size:11px" onclick="event.stopPropagation();copyMtgSummary(${m.id})">📤 Copy Summary</button>
+      <button class="hdr-btn" style="margin-left:4px;font-size:11px" onclick="event.stopPropagation();downloadMtgPDF(${m.id})">📥 PDF</button>
+      <input type="file" id="pdf-inp-${m.id}" accept=".pdf" style="display:none" onchange="extractPdfToTasks(${m.id},this)">
+      <button class="btn-icon" style="margin-left:4px;font-size:11px" title="Import PDF as tasks" onclick="event.stopPropagation();document.getElementById('pdf-inp-${m.id}').click()">📄</button>
+    </div>
+    <div id="mtg-body-${m.id}" style="display:block">`;
+  (m.tasks||[]).forEach((t,idx)=>{
+    h+=`<div class="mtg-task-row ${t.done?'done':''}" draggable="true"
+      ondragstart="dragMtgStart(event,${m.id},${t.id})"
+      ondragover="dragMtgOver(event,this)"
+      ondragleave="this.style.borderTop=''"
+      ondrop="dropMtgTask(event,${m.id},${t.id})">
+      <span style="cursor:grab;color:#bbb;font-size:18px;padding:0 6px 0 2px;user-select:none" title="Drag to reorder">⠿</span>
+      <input type="checkbox" ${t.done?'checked':''} onchange="togMtgTask(${m.id},${t.id})">
+      <span class="mtg-task-text" style="flex:1" data-mid="${m.id}" data-tid="${t.id}" data-text="${t.text.replace(/"/g,'&quot;')}">${t.text}${t.movedTo?`<span class="mtg-moved-tag">→ ${t.movedTo}</span>`:''}</span>
+      <div class="mtg-task-actions">
+        <button class="mtask-btn" onclick="event.stopPropagation();editMtgTask(${m.id},${t.id},this)" title="Edit">✏️</button>
+        <button class="mtask-btn tophase" onclick="event.stopPropagation();showMtgCopyPicker(${m.id},${t.id},this)" title="Copy to meeting">⎘</button>
+        <button class="mtask-btn tophase" onclick="event.stopPropagation();showMtgMovePicker(${m.id},${t.id},this)">→ Mtg</button>
+        <button class="mtask-btn tophase" onclick="moveToPhase(${m.id},${t.id})">→ Phase</button>
+        <button class="mtask-btn tophase" style="background:#fef3c7;color:#92400e;border-color:#fde68a" onclick="mtgTaskToFl(${m.id},${t.id})">→ Fix</button>
+        <button class="mtask-btn tophase" style="background:#f0fdf4;color:#166534;border-color:#bbf7d0" onclick="moveToMat(${m.id},${t.id})">→ Mat</button>
+        <button class="mtask-btn del" onclick="delMtgTask(${m.id},${t.id})">×</button>
+      </div>
+    </div>`;
+  });
+  h+=`<div class="add-row">
+    <input class="add-input" id="mti-${m.id}" type="text" placeholder="Add task…" onkeydown="if(event.key==='Enter')addMtgTask(${m.id})">
+    <button class="btn btn-sm" onclick="addMtgTask(${m.id})">+</button>
+  </div></div></div>`;
+  return h;
+}
+
+function updateMtgDate(mid,val){
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  m.date=val; renderMeetings();
+}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function addMtg(type){
+  const suf=type==='lefkada'?'lef':'wkl';
+  const who=document.getElementById('mw-'+suf).value;
+  const date=document.getElementById('md-'+suf).value;
+  meetings.unshift({id:mtgNextId++,who,date,meetType:type,tasks:[]});
+  renderMeetings();
+}
+function delMtg(id){if(!confirm('Delete meeting?'))return;meetings=meetings.filter(m=>m.id!==id);renderMeetings();}
+function togMtgTask(mid,tid){
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  const t=m.tasks.find(x=>x.id===tid); if(t)t.done=!t.done;
+  renderMeetings();
+}
+function addMtgTask(mid){
+  const el=document.getElementById('mti-'+mid); const txt=el.value.trim(); if(!txt)return;
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  m.tasks.push({id:mtgTid++,text:txt,done:false,movedTo:null});
+  el.value=''; renderMeetings();
+}
+function delMtgTask(mid,tid){
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  m.tasks=m.tasks.filter(t=>t.id!==tid); renderMeetings();
+}
+function saveMtgEdit(inp,mid,tid){
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  const t=m.tasks.find(x=>x.id===tid); if(!t)return;
+  const val=inp.value.trim(); if(!val)return;
+  t.text=val;
+  renderMeetings();
+}
+function editMtgTask(mid,tid,btn){
+  const row=btn.closest('.mtg-task-row'); if(!row)return;
+  row.setAttribute('draggable','false');
+  const span=row.querySelector('.mtg-task-text'); if(!span)return;
+  const old=span.getAttribute('data-text')||span.textContent.trim();
+  const realMid=parseInt(span.getAttribute('data-mid'));
+  const realTid=parseInt(span.getAttribute('data-tid'));
+  span.innerHTML='';
+  const inp=document.createElement('input');
+  inp.type='text';
+  inp.value=old;
+  inp.style.cssText='flex:1;font-size:13px;padding:2px 6px;border:1px solid #aaa;border-radius:4px;width:100%;box-sizing:border-box';
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter') inp.blur();
+    if(e.key==='Escape') renderMeetings();
+  });
+  inp.addEventListener('blur',()=>saveMtgEdit(inp,realMid,realTid));
+  span.appendChild(inp);
+  inp.focus(); inp.select();
+}
+function saveMtgTask(mid,tid){
+  const inp=document.getElementById('mtge-'+mid+'-'+tid); if(!inp)return;
+  const val=inp.value.trim(); if(!val)return;
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  const t=m.tasks.find(x=>x.id===tid); if(t)t.text=val;
+  renderMeetings();
+}
+let _dragMid=null,_dragTid=null;
+function dragMtgStart(e,mid,tid){_dragMid=mid;_dragTid=tid;e.dataTransfer.effectAllowed='move';}
+function dragMtgOver(e,el){e.preventDefault();el.style.borderTop='2px solid #1a7fd4';}
+function dropMtgTask(e,mid,tid){
+  e.preventDefault();
+  document.querySelectorAll('.mtg-task-row').forEach(r=>r.style.borderTop='');
+  if(_dragMid!==mid||_dragTid===tid)return;
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  const from=m.tasks.findIndex(x=>x.id===_dragTid);
+  const to=m.tasks.findIndex(x=>x.id===tid);
+  if(from===-1||to===-1)return;
+  const [task]=m.tasks.splice(from,1);
+  m.tasks.splice(to,0,task);
+  _dragMid=null;_dragTid=null;
+  renderMeetings();
+}
+let _dragPh=null,_dragCat=null,_dragIdx=null;
+function dragPhStart(e,ph,cat,i){_dragPh=ph;_dragCat=cat;_dragIdx=i;e.dataTransfer.effectAllowed='move';}
+function dragPhOver(e,el){e.preventDefault();el.style.borderTop='2px solid #1a7fd4';}
+function dropPhTask(e,ph,cat,i){
+  e.preventDefault();
+  document.querySelectorAll('.check-row').forEach(r=>r.style.borderTop='');
+  if(_dragPh!==ph||_dragCat!==cat||_dragIdx===i)return;
+  const items=phaseData[ph][cat].items;
+  const sid=ph+'-'+cat;
+  const [item]=items.splice(_dragIdx,1);
+  const [st]=state[sid].splice(_dragIdx,1);
+  const [cm]=comments[sid].splice(_dragIdx,1);
+  items.splice(i,0,item);
+  state[sid].splice(i,0,st);
+  comments[sid].splice(i,0,cm);
+  _dragPh=null;_dragCat=null;_dragIdx=null;
+  renderPhases();
+}
+function moveCross(mid,tid,targetType){
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  const ti=m.tasks.findIndex(x=>x.id===tid); if(ti===-1)return;
+  const t=m.tasks[ti];
+  let tgt=meetings.find(x=>x.meetType===targetType);
+  if(!tgt){tgt={id:mtgNextId++,who:m.who,date:todayStr(),meetType:targetType,tasks:[]};meetings.unshift(tgt);}
+  tgt.tasks.push({id:mtgTid++,text:t.text,done:false,movedTo:null});
+  m.tasks.splice(ti,1); renderMeetings();
+}
+function showMtgMovePicker(mid,tid,btn){
+  document.querySelectorAll('.move-menu').forEach(m=>m.remove());
+  const menu=document.createElement('div');
+  menu.className='move-menu';
+  menu.style.cssText='position:absolute;background:white;border:1px solid #ddd;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:9999;min-width:180px;padding:4px 0';
+  let html='<div style="font-size:11px;color:#888;padding:6px 12px 4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Move to meeting</div>';
+  meetings.filter(m=>m.id!==mid).forEach(m=>{
+    html+=`<div onclick="moveMtgToMtg(${mid},${tid},${m.id})" style="padding:8px 14px;cursor:pointer;font-size:13px" onmouseover="this.style.background='#f4f8fd'" onmouseout="this.style.background=''">
+      ${whoLabels[m.who]||m.who} — ${m.date}
+    </div>`;
+  });
+  if(!meetings.filter(m=>m.id!==mid).length) html+='<div style="padding:8px 14px;color:#aaa;font-size:13px">No other meetings</div>';
+  menu.innerHTML=html;
+  const rect=btn.getBoundingClientRect();
+  menu.style.top=(rect.bottom+window.scrollY+4)+'px';
+  menu.style.left=Math.max(4,rect.left+window.scrollX-80)+'px';
+  document.body.appendChild(menu);
+  setTimeout(()=>document.addEventListener('click',()=>menu.remove(),{once:true}),10);
+}
+function moveMtgToMtg(fromMid,tid,toMid){
+  document.querySelectorAll('.move-menu').forEach(m=>m.remove());
+  const from=meetings.find(x=>x.id===fromMid); if(!from)return;
+  const to=meetings.find(x=>x.id===toMid); if(!to)return;
+  const ti=from.tasks.findIndex(x=>x.id===tid); if(ti===-1)return;
+  const t=from.tasks.splice(ti,1)[0];
+  to.tasks.push({id:mtgTid++,text:t.text,done:false,movedTo:null});
+  renderMeetings();
+}
+function showMtgCopyPicker(mid,tid,btn){
+  document.querySelectorAll('.move-menu').forEach(m=>m.remove());
+  const menu=document.createElement('div');
+  menu.className='move-menu';
+  menu.style.cssText='position:absolute;background:white;border:1px solid #ddd;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:9999;min-width:180px;padding:4px 0';
+  let html='<div style="font-size:11px;color:#888;padding:6px 12px 4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Copy to meeting</div>';
+  meetings.filter(m=>m.id!==mid).forEach(m=>{
+    html+=`<div onclick="copyMtgToMtg(${mid},${tid},${m.id})" style="padding:8px 14px;cursor:pointer;font-size:13px" onmouseover="this.style.background='#f4f8fd'" onmouseout="this.style.background=''">
+      ${whoLabels[m.who]||m.who} — ${m.date}
+    </div>`;
+  });
+  if(!meetings.filter(m=>m.id!==mid).length) html+='<div style="padding:8px 14px;color:#aaa;font-size:13px">No other meetings</div>';
+  menu.innerHTML=html;
+  const rect=btn.getBoundingClientRect();
+  menu.style.top=(rect.bottom+window.scrollY+4)+'px';
+  menu.style.left=Math.max(4,rect.left+window.scrollX-80)+'px';
+  document.body.appendChild(menu);
+  setTimeout(()=>document.addEventListener('click',()=>menu.remove(),{once:true}),10);
+}
+function copyMtgToMtg(fromMid,tid,toMid){
+  document.querySelectorAll('.move-menu').forEach(m=>m.remove());
+  const from=meetings.find(x=>x.id===fromMid); if(!from)return;
+  const to=meetings.find(x=>x.id===toMid); if(!to)return;
+  const t=from.tasks.find(x=>x.id===tid); if(!t)return;
+  to.tasks.push({id:mtgTid++,text:t.text,done:false,movedTo:null});
+  renderMeetings();
+}
+function openPrintWindow(title,bodyHtml){
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title>
+  <style>@page{size:portrait}body{font-family:Arial,sans-serif;margin:32px;color:#222}h1{color:#1a3a5c;font-size:20px;margin-bottom:4px}h2{color:#1a3a5c;font-size:16px;margin-top:18px;margin-bottom:4px}h3{color:#555;font-size:13px;margin:10px 0 3px}table{width:100%;border-collapse:collapse}td{border-bottom:1px solid #eee;vertical-align:top;padding:5px 8px;font-size:13px}.meta{color:#888;font-size:12px;margin-bottom:18px}@media print{body{margin:16px}}</style>
+  </head><body>${bodyHtml}<script>window.onload=()=>window.print()<\/script></body></html>`;
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();}
+}
+function downloadCatPDF(ph,cat){
+  const pd=phaseData[ph]; if(!pd)return;
+  const cd=pd[cat]; if(!cd)return;
+  const sid=ph+'-'+cat;
+  const done=(state[sid]||[]).filter(Boolean).length;
+  let rows='<table>';
+  (cd.items||[]).forEach((item,i)=>{
+    const checked=state[sid]&&state[sid][i];
+    rows+=`<tr style="background:${i%2===0?'#fafafa':'white'}"><td style="width:24px;font-size:15px;padding:6px 8px">${checked?'☑':'☐'}</td><td style="padding:6px 8px;${checked?'text-decoration:line-through;color:#aaa':''}">${item}</td></tr>`;
+  });
+  rows+='</table>';
+  openPrintWindow(`${pd.label} — ${cd.label}`,`<h1>${cd.label}</h1><div class="meta">${pd.label} &nbsp;·&nbsp; ${new Date().toLocaleDateString('en-GB')} &nbsp;·&nbsp; ${done}/${cd.items.length} done</div>${rows}`);
+}
+function downloadPhasePDF(ph){
+  const pd=phaseData[ph]; if(!pd)return;
+  let rows='';
+  for(const cat in pd){
+    if(cat==='label')continue;
+    const cd=pd[cat]; const sid=ph+'-'+cat;
+    const done=(state[sid]||[]).filter(Boolean).length;
+    rows+=`<h3>${cd.label} &nbsp;<span style="color:#888;font-weight:normal">${done}/${cd.items.length}</span></h3>`;
+    rows+='<table>';
+    (cd.items||[]).forEach((item,i)=>{
+      const checked=state[sid]&&state[sid][i];
+      rows+=`<tr style="background:${i%2===0?'#fafafa':'white'}"><td style="width:24px;font-size:15px">${checked?'☑':'☐'}</td><td style="${checked?'text-decoration:line-through;color:#aaa':''}">${item}</td></tr>`;
+    });
+    rows+='</table>';
+  }
+  openPrintWindow(pd.label,`<h1>${pd.label}</h1><div class="meta">${new Date().toLocaleDateString('en-GB')}</div>${rows}`);
+}
+function downloadMatPDF(sid,label,items,stateArr){
+  const done=stateArr.filter(x=>x&&x.done).length;
+  let rows='<table>';
+  items.forEach((item,i)=>{
+    const st=stateArr[i]||{};
+    rows+=`<tr style="background:${i%2===0?'#fafafa':'white'}"><td style="width:24px;font-size:15px">${st.done?'☑':'☐'}</td><td style="${st.done?'text-decoration:line-through;color:#aaa':''}"><div>${item}</div>${st.note?`<div style="font-size:11px;color:#888;margin-top:2px">${st.note}</div>`:''}</td></tr>`;
+  });
+  rows+='</table>';
+  openPrintWindow(label,`<h1>${label}</h1><div class="meta">${new Date().toLocaleDateString('en-GB')} &nbsp;·&nbsp; ${done}/${items.length} done</div>${rows}`);
+}
+function downloadMtgPDF(mid){
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  const who=whoLabels[m.who]||m.who;
+  const date=m.date;
+  const done=m.tasks.filter(t=>t.done).length;
+  const total=m.tasks.length;
+  let rows='';
+  m.tasks.forEach((t,i)=>{
+    rows+=`<tr style="background:${i%2===0?'#fafafa':'white'}">
+      <td style="width:24px;text-align:center;padding:6px 8px;font-size:15px">${t.done?'☑':'☐'}</td>
+      <td style="padding:6px 8px;font-size:13px;${t.done?'text-decoration:line-through;color:#aaa':''}">${t.text}</td>
+    </tr>`;
+  });
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8">
+  <title>${who} — ${date}</title>
+  <style>
+    @page{size:portrait}
+    body{font-family:Arial,sans-serif;margin:32px;color:#222}
+    h1{color:#1a3a5c;font-size:20px;margin-bottom:4px}
+    .meta{color:#888;font-size:13px;margin-bottom:20px}
+    table{width:100%;border-collapse:collapse}
+    td{border-bottom:1px solid #eee;vertical-align:top}
+    @media print{body{margin:16px}}
+  </style></head><body>
+  <h1>${who}</h1>
+  <div class="meta">${date} &nbsp;·&nbsp; ${done}/${total} done</div>
+  <table>${rows}</table>
+  <script>window.onload=()=>{window.print();}<\/script>
+  </body></html>`;
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();}
+}
+function moveToPhase(mid,tid){
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  const t=m.tasks.find(x=>x.id===tid); if(!t)return;
+  _pendingText=t.text;
+  showPhasePicker((ph,cat)=>{
+    t.movedTo=phaseData[ph].label+' › '+phaseData[ph][cat].label;
+  });
+}
+function moveToMat(mid,tid){
+  const m=meetings.find(x=>x.id===mid); if(!m)return;
+  const t=m.tasks.find(x=>x.id===tid); if(!t)return;
+  document.getElementById('modal-title').textContent='Add to Materials';
+  let h='';
+  matSections.forEach(s=>{
+    h+=`<div class="picker-item" onclick="addMtgToMatSection('${mid}','${tid}','${s.id}','${s.label.replace(/'/g,"\\'")}')">
+      ${s.label}
+    </div>`;
+  });
+  customMatSections.forEach(s=>{
+    h+=`<div class="picker-item" onclick="addMtgToCustomMatSection('${mid}','${tid}',${s.id},'${s.label.replace(/'/g,"\\'")}')">
+      ${s.label}
+    </div>`;
+  });
+  document.getElementById('modal-list').innerHTML=h;
+  document.getElementById('phase-modal').classList.add('show');
+}
+function addMtgToMatSection(mid,tid,sid,label){
+  document.getElementById('phase-modal').classList.remove('show');
+  const m=meetings.find(x=>x.id==mid); if(!m)return;
+  const t=m.tasks.find(x=>x.id==tid); if(!t)return;
+  const s=matSections.find(x=>x.id===sid); if(!s)return;
+  s.items.push(t.text);
+  if(!matState[sid]) matState[sid]=[];
+  matState[sid].push({done:false,note:''});
+  t.movedTo=label;
+  renderMeetings(); renderMaterials();
+}
+function addMtgToCustomMatSection(mid,tid,sid,label){
+  document.getElementById('phase-modal').classList.remove('show');
+  const m=meetings.find(x=>x.id==mid); if(!m)return;
+  const t=m.tasks.find(x=>x.id==tid); if(!t)return;
+  const s=customMatSections.find(x=>x.id==sid); if(!s)return;
+  s.items.push(t.text);
+  if(!customMatState[sid]) customMatState[sid]=[];
+  customMatState[sid].push({done:false,note:''});
+  t.movedTo=label;
+  renderMeetings(); renderMaterials();
+}
+
+// ── SITE VISITS ────────────────────────────────────────────
+
+// ── MATERIALS ──────────────────────────────────────────────
+// Guiding principles: sustainable, ecological, locally sourced
+const matSections = [
+  { id:'principles', label:'🌿 Guiding Principles', items:[
+    'All material choices: sustainable, ecological, locally sourced',
+    'Elements to guide choices: air, earth, water, fire, space',
+  ]},
+  { id:'roofs', label:'🏠 Roofs', items:[
+    'Interior ceiling color',
+    'Roof tile color',
+    'Triangle cladding method',
+  ]},
+  { id:'builtin', label:'🛋️ Built-in Furniture', items:[
+    'Sofas — note: coffee table coordination',
+    'Sinks — built-in Petiti style in shower bathrooms',
+    'Kitchens — proper layout + cutlery drawers',
+    'Bedroom wardrobes — 2nd floor: detailed planning needed',
+    'Kitchen niches — Units C + A',
+    'Outdoor seating — must not conflict with future hot tub',
+    'Shared kitchen area — design decision',
+  ]},
+  { id:'cladding', label:'🧱 Cladding (Petiti / Kapsalis)', items:[
+    'Interior cladding — rounded corners in niches',
+    'Bathroom cladding',
+    'Kitchen cladding',
+    'Built-in furniture cladding',
+    'Balcony built-in furniture cladding',
+    'Window sills material',
+    'Stone walls — confirm exact locations',
+    'Exterior kitchen cladding — which material?',
+    'Exterior plaster & outdoor furniture: like desert style, rounded corners, Petiti-feel but more natural — Kapsalis',
+  ]},
+  { id:'floor-int', label:'🪨 Interior Flooring', items:[
+    'Tile direction: length-view from entrance (not width)',
+    'Stair tile solution',
+    'Balcony flooring — same tile as interior',
+  ]},
+  { id:'floor-ext', label:'🌿 Exterior Flooring', items:[
+    'Path between units: river stones + natural tiles',
+    'General path material throughout complex',
+    'Studio prep area + deck material',
+    'Exterior kitchen area: polished concrete',
+  ]},
+  { id:'doors', label:'🚪 Doors', items:[
+    'Entry door — each unit',
+    'Entry door — each room',
+    'Bathroom doors',
+    '1st floor balcony doors',
+    'Exterior doors — teacher room, chef kitchen, basement',
+    'Under-stair doors at entrance to each unit',
+  ]},
+  { id:'windows', label:'🪟 Windows', items:[
+    'Color & texture',
+    'Handles',
+    'Small windows — verify draikipp (tilt & turn)',
+    'Balcony exit door material — prefer glass for more light',
+  ]},
+  { id:'pergolas', label:'🌳 Pergolas', items:[
+    'All pergolas: pressed wood (incl. studio + outside kitchen)',
+    'Studio pergola',
+    'Pool pergola — confirm material',
+    'Unit balcony pergolas',
+    'Entrance pergolas',
+  ]},
+  { id:'railings', label:'🪜 Railings & Guardrails', items:[
+    'Internal staircase railing — bamboo, ground to 2nd floor',
+    'Balcony railings — natural material, minimum maintenance (see ref photo)',
+    'Exterior railings — ropes',
+    'Studio railings — check height',
+    'Sea-climbing rails — grip points',
+  ]},
+  { id:'cabinets', label:'🗄️ Cabinets & Storage', items:[
+    'Storage cabinet material',
+    'Lockable storage cabinets',
+  ]},
+  { id:'kitchen-s', label:'🍳 Kitchens ×3 (Small Units)', items:[
+    'Fridge width 55cm — note: niche built at 60cm',
+    'Oven 60cm / Toaster oven 50cm',
+    'Sink 40cm — note: cabinet built at 50cm',
+    'Cabinet unit 50cm',
+    'Total kitchen length: 2.30m',
+    'Upper shelves',
+    'Kitchen niche — Units C + A',
+    'Dishes & kitchenware',
+  ]},
+  { id:'kitchen-l', label:'🍽️ Large Kitchen ×1 (Unit D)', items:[
+    'Unit D: convert from large construction to regular kitchen',
+    'Two sinks',
+    'Two ovens',
+    'Kitchen faucet',
+    '5-burner range',
+    'Built-in drawer element',
+    'Large fridge',
+    'Group serving utensils',
+  ]},
+  { id:'bathrooms', label:'🚿 Bathrooms', items:[
+    'Wall niches for soap',
+    'Toilet: 49cm',
+    'Built-in Petiti sink (agreed Akis + Nikos) — shower 40cm',
+    'Doors: 70cm, opening inward',
+    'Bathroom cladding: KAPSALIS color like Petiti (not standard tiles)',
+    'Faucets: nickel finish',
+    'Glass water splash wall — confirm size & position',
+    'Bathroom accessories: match faucet finish',
+  ]},
+  { id:'stairs', label:'🪜 Interior Stairs', items:[
+    'Special stair tile — choose',
+    'Stair railing — style like Coco',
+  ]},
+  { id:'electricity', label:'⚡ Electricity', items:[
+    'Sockets — type and placement',
+    'Light fixtures — choose type',
+    'Solar garden lights — and what else can be solar?',
+    'Exterior lighting — Carmi style + solar',
+    'String lights (guirlandes) outside',
+  ]},
+  { id:'pool', label:'🏊 Pool', items:[
+    'Pool tiles: 1055200 60×30 MULTICOLOR STONE (confirmed with Sigal)',
+    'Filtration system — minimum noise',
+    'Magnesium purification system',
+  ]},
+  { id:'studio', label:'🎵 Studio', items:[
+    'Sealed / watertight roof',
+    'Glass windows',
+    'Internal blinds/shutters',
+    'AC + fans',
+    'Storage with equipment + shelves',
+    'Sound system',
+    'Studio deck material',
+  ]},
+  { id:'amphitheater', label:'🎭 Amphitheater', items:[
+    'Stones from old house',
+  ]},
+  { id:'garden', label:'🌱 Gardening (Chrissa)', items:[
+    'Trees between balcony tiles in complex',
+    'Upper entrance planting',
+    'Large pots for plants',
+    'Terracing for accessible gardening',
+    'Climbing plants near pergolas',
+    'Tree on every balcony',
+    'Herb and/or vegetable garden plan',
+    'Plant alcoves on balconies (upper, lower, pool area, studio)',
+    'Plant plan between buildings — cacti or local vegetation',
+  ]},
+  { id:'treatment', label:'💆 Treatment Room', items:[
+    'What does teacher room need to convert to treatment room?',
+  ]},
+  { id:'quantities', label:'📐 Tile Quantities', items:[
+    'Interior flooring (incl. balconies + walkable roofs): 430m²',
+    'Bathroom walls (incl. basement extra bathroom): 200m²',
+    'Pool tiles (interior + edges): 185m²',
+    'Surrounding exterior area: 460m² (incl. Cour Anglaise + Unit D stairs)',
+    'Underground basement next to pool: 36m² @ €20/m² incl. VAT',
+    'Bathroom walls in underground basement: 18m²',
+    'Price: €24/m² incl. VAT (€19.35 excl.) for interior, exterior & pool',
+    'Note: includes 10% wastage for floors/walls, 12% for pool',
+  ]},
+];
+
+// matState[sid][i] = { note:'', done:false }
+const matState = {};
+function initMatState(){
+  matSections.forEach(s=>{
+    matState[s.id] = s.items.map(()=>({note:'',done:false}));
+  });
+}
+
+const matOpen = {};
+let customMaterials=[], cmNextId=1;
+let customMatSections=[], cmsNextId=1;
+let customMatState={};
+let matFiles={};    // key:'sid__i' → [{name,type,dataUrl,cat}]  cat='photo'|'invoice'
+let phasePhotos={}; // key:ph → [{name,type,dataUrl}]
+
+// ── GENERIC FILE VIEWER ────────────────────────────────────
+function openAnyFile(f){
+  document.querySelectorAll('#any-file-ov').forEach(e=>e.remove());
+  const {url,mime}=dataUrlToObjectUrl(f.dataUrl);
+  const isImage=mime.startsWith('image/');
+  const viewer=isImage
+    ?`<div style="flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;background:#111"><img src="${url}" style="max-width:100%;max-height:100%;object-fit:contain"></div>`
+    :`<object data="${url}" type="application/pdf" style="flex:1;width:100%;border:none"><div style="padding:30px;text-align:center"><a href="${url}" download="${f.name}" style="background:#1a3a5c;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700">⬇ Download to view</a></div></object>`;
+  const ov=document.createElement('div');
+  ov.id='any-file-ov';
+  ov.style.cssText='position:fixed;inset:0;background:white;z-index:99999;display:flex;flex-direction:column';
+  ov.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:2px solid #d0e4f7;background:white;flex-shrink:0">
+    <strong style="flex:1;color:#1a3a5c;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.name}</strong>
+    <a href="${url}" download="${f.name}" style="background:#eee;color:#333;border:none;padding:8px 12px;border-radius:6px;font-size:12px;cursor:pointer;text-decoration:none">⬇</a>
+    <button onclick="document.getElementById('any-file-ov').remove()" style="background:#1a3a5c;color:white;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">✕ Close</button>
+  </div>${viewer}`;
+  document.body.appendChild(ov);
+}
+// openPfx / delPfx: function call prefix, e.g. "openMatFile('sid',0,"
+// chip will complete it: openPfx + fi + ")"
+function renderFileChips(files,openPfx,delPfx){
+  if(!files||!files.length) return '';
+  let h='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">';
+  files.forEach((f,fi)=>{
+    const isImg=f.type&&f.type.startsWith('image/');
+    const icon=isImg?'🖼️':(f.type&&f.type.includes('pdf')?'📄':'📎');
+    const catBadge=f.cat==='invoice'?'<span style="font-size:9px;background:#fef3c7;color:#92400e;padding:1px 4px;border-radius:3px;margin-left:3px">INV</span>':'';
+    h+=`<div style="display:flex;align-items:center;gap:4px;background:#f0f4f8;border:1px solid #d0e4f7;border-radius:6px;padding:3px 7px;font-size:11px;max-width:200px">
+      <span onclick="${openPfx}${fi})" style="cursor:pointer">${icon}</span>
+      <span onclick="${openPfx}${fi})" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px;cursor:pointer">${f.name}</span>
+      ${catBadge}
+      <button onclick="${delPfx}${fi})" style="background:none;border:none;color:#aaa;cursor:pointer;font-size:14px;padding:0;margin-left:2px;flex-shrink:0">×</button>
+    </div>`;
+  });
+  return h+'</div>';
+}
+// Mat file functions
+function mfKey(sid,i){return sid+'__'+i;}
+function uploadMatFile(sid,i,input,cat){
+  const file=input.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const k=mfKey(sid,i);
+    if(!matFiles[k])matFiles[k]=[];
+    matFiles[k].push({name:file.name,type:file.type,dataUrl:e.target.result,cat});
+    idbSaveFiles();renderMaterials();
+  };
+  reader.readAsDataURL(file);
+}
+function openMatFile(sid,i,fi){
+  const f=(matFiles[mfKey(sid,i)]||[])[fi]; if(f)openAnyFile(f);
+}
+function delMatFile(sid,i,fi){
+  const k=mfKey(sid,i);
+  if(matFiles[k])matFiles[k].splice(fi,1);
+  idbSaveFiles();renderMaterials();
+}
+// Phase photo functions
+function uploadPhasePhoto(ph,input){
+  const files=Array.from(input.files); if(!files.length)return;
+  if(!phasePhotos[ph])phasePhotos[ph]=[];
+  let pending=files.length;
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      phasePhotos[ph].push({name:file.name,type:file.type,dataUrl:e.target.result});
+      if(--pending===0){idbSaveFiles();renderPhases();}
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function openPhasePhoto(ph,fi){
+  const f=(phasePhotos[ph]||[])[fi]; if(f)openAnyFile(f);
+}
+function delPhasePhoto(ph,fi){
+  if(phasePhotos[ph])phasePhotos[ph].splice(fi,1);
+  idbSaveFiles();renderPhases();
+}
+
+function renderMaterials(){
+  let h='<div style="font-size:11px;color:#888;margin-bottom:10px;padding:6px 10px;background:#fff8e8;border-radius:6px;border-left:3px solid var(--gold)">🌿 Guiding principle: sustainable · ecological · locally sourced</div>';
+  matSections.forEach(s=>{
+    const open = matOpen[s.id] !== false;
+    const done = matState[s.id].filter(x=>x.done).length;
+    h+=`<div style="margin-bottom:5px">
+      <div style="background:var(--blue);color:white;padding:9px 13px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-bottom:2px">
+        <span style="flex:1" onclick="togMatSec('${s.id}')">${s.label}</span>
+        <button onclick="event.stopPropagation();downloadMatPDF('${s.id}','${s.label}',${JSON.stringify(s.items)},matState['${s.id}'])" style="background:rgba(255,255,255,.2);border:none;border-radius:5px;color:white;font-size:11px;padding:3px 8px;cursor:pointer">📥 PDF</button>
+        <span style="font-size:11px;opacity:.8" onclick="togMatSec('${s.id}')">${done}/${s.items.length} ${open?'▾':'▸'}</span>
+      </div>
+      <div id="ms-${s.id}" style="${open?'':'display:none'}">`;
+    s.items.forEach((item,i)=>{
+      const st=matState[s.id][i];
+      const mfk=mfKey(s.id,i);
+      const mf=matFiles[mfk]||[];
+      const chips=renderFileChips(mf,`openMatFile('${s.id}',${i},`,`delMatFile('${s.id}',${i},`);
+      h+=`<div style="background:white;border-bottom:1px solid #f0f0f0;padding:7px 11px">
+        <div style="display:flex;align-items:flex-start;gap:7px">
+          <input type="checkbox" ${st.done?'checked':''} style="margin-top:2px;flex:none" onchange="togMatItem('${s.id}',${i})">
+          <div style="flex:1">
+            <div style="font-size:13px;${st.done?'text-decoration:line-through;color:#999':''}">${item}</div>
+            <textarea class="item-comment" placeholder="Decision / choice…" onchange="setMatNote('${s.id}',${i},this.value)">${st.note}</textarea>
+            <div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;align-items:center">
+              <label style="display:flex;align-items:center;gap:3px;background:#e0f2fe;color:#0369a1;border:none;border-radius:5px;padding:3px 9px;font-size:11px;font-weight:600;cursor:pointer" title="Upload photo">📷 Photo<input type="file" accept="image/*" style="display:none" onchange="uploadMatFile('${s.id}',${i},this,'photo')"></label>
+              <label style="display:flex;align-items:center;gap:3px;background:#fef9c3;color:#854d0e;border:none;border-radius:5px;padding:3px 9px;font-size:11px;font-weight:600;cursor:pointer" title="Upload invoice">📄 Invoice<input type="file" accept="image/*,.pdf" style="display:none" onchange="uploadMatFile('${s.id}',${i},this,'invoice')"></label>
+            </div>
+            ${chips}
+          </div>
+        </div>
+      </div>`;
+    });
+    // add custom item row
+    h+=`<div class="add-row" style="background:#fafafa">
+      <input class="add-input" id="msa-${s.id}" type="text" placeholder="Add item…" onkeydown="if(event.key==='Enter')addMatItem('${s.id}')">
+      <button class="btn btn-sm" onclick="addMatItem('${s.id}')">+</button>
+    </div>`;
+    h+='</div></div>';
+  });
+
+  // Custom categories
+  customMatSections.forEach(s=>{
+    if(!customMatState[s.id]) customMatState[s.id]=[];
+    const open = matOpen['cms-'+s.id] !== false;
+    const done = customMatState[s.id].filter(x=>x.done).length;
+    h+=`<div style="margin-bottom:5px">
+      <div style="background:var(--blue);color:white;padding:9px 13px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-bottom:2px">
+        <span onclick="togMatSec('cms-${s.id}')" style="flex:1">${s.label}</span>
+        <span style="font-size:11px;opacity:.8" onclick="togMatSec('cms-${s.id}')">${done}/${s.items.length} ${open?'▾':'▸'}</span>
+        <button onclick="delCustomMatSection(${s.id})" style="background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:14px;padding:0 4px" title="Delete category">×</button>
+      </div>
+      <div id="ms-cms-${s.id}" style="${open?'':'display:none'}">`;
+    s.items.forEach((item,i)=>{
+      const st=customMatState[s.id][i]||{done:false,note:''};
+      const cmk=mfKey('cms-'+s.id,i);
+      const cmf=matFiles[cmk]||[];
+      const cmchips=renderFileChips(cmf,`openMatFile('cms-${s.id}',${i},`,`delMatFile('cms-${s.id}',${i},`);
+      h+=`<div style="background:white;border-bottom:1px solid #f0f0f0;padding:7px 11px">
+        <div style="display:flex;align-items:flex-start;gap:7px">
+          <input type="checkbox" ${st.done?'checked':''} style="margin-top:2px;flex:none" onchange="togCmsItem(${s.id},${i})">
+          <div style="flex:1">
+            <div style="font-size:13px;${st.done?'text-decoration:line-through;color:#999':''}">${item}</div>
+            <textarea class="item-comment" placeholder="Notes…" onchange="setCmsNote(${s.id},${i},this.value)">${st.note||''}</textarea>
+            <div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;align-items:center">
+              <label style="display:flex;align-items:center;gap:3px;background:#e0f2fe;color:#0369a1;border:none;border-radius:5px;padding:3px 9px;font-size:11px;font-weight:600;cursor:pointer">📷 Photo<input type="file" accept="image/*" style="display:none" onchange="uploadMatFile('cms-${s.id}',${i},this,'photo')"></label>
+              <label style="display:flex;align-items:center;gap:3px;background:#fef9c3;color:#854d0e;border:none;border-radius:5px;padding:3px 9px;font-size:11px;font-weight:600;cursor:pointer">📄 Invoice<input type="file" accept="image/*,.pdf" style="display:none" onchange="uploadMatFile('cms-${s.id}',${i},this,'invoice')"></label>
+            </div>
+            ${cmchips}
+          </div>
+          <button onclick="delCmsItem(${s.id},${i})" style="background:none;border:none;color:#ddd;cursor:pointer;font-size:16px;padding:0">×</button>
+        </div>
+      </div>`;
+    });
+    h+=`<div class="add-row" style="background:#fafafa">
+      <input class="add-input" id="cmsa-${s.id}" type="text" placeholder="Add item…" onkeydown="if(event.key==='Enter')addCmsItem(${s.id})">
+      <button class="btn btn-sm" onclick="addCmsItem(${s.id})">+</button>
+    </div>`;
+    h+='</div></div>';
+  });
+
+  // Add Category button
+  h+=`<div style="margin:14px 0 6px">
+    <button onclick="addCustomMatSection()" style="width:100%;padding:10px;border:2px dashed #aac8e8;background:none;border-radius:8px;color:#1a3a5c;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation">+ New Category</button>
+  </div>`;
+
+  // My Additions (freeform)
+  h+=`<div class="sec-title" style="margin-top:8px">✏️ My Additions</div>
+    <div style="border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)">`;
+  customMaterials.forEach(m=>{
+    h+=`<div class="mat-custom-item">
+      <input class="mat-inp" type="text" value="${m.key}" placeholder="Item…" onchange="updMat(${m.id},'key',this.value)">
+      <input class="mat-inp" type="text" value="${m.val}" placeholder="Details…" onchange="updMat(${m.id},'val',this.value)">
+      <button class="btn-icon" onclick="delMat(${m.id})">×</button>
+    </div>`;
+  });
+  h+=`<div class="add-row">
+    <input class="add-input" id="mki" type="text" placeholder="Item…">
+    <input class="add-input" id="mvi" type="text" placeholder="Details…">
+    <button class="btn btn-sm" onclick="addMat()">+</button>
+  </div></div>`;
+  document.getElementById('materials-container').innerHTML=h;
+}
+
+function togMatSec(id){
+  matOpen[id]=matOpen[id]===false?true:false;
+  const el=document.getElementById('ms-'+id);
+  if(el) el.style.display=matOpen[id]===false?'none':'';
+}
+function addCustomMatSection(){
+  const name=prompt('Category name:'); if(!name||!name.trim()) return;
+  const id=cmsNextId++;
+  customMatSections.push({id, label:name.trim(), items:[]});
+  customMatState[id]=[];
+  renderMaterials();
+}
+function delCustomMatSection(id){
+  if(!confirm('Delete this category and all its items?')) return;
+  customMatSections=customMatSections.filter(s=>s.id!==id);
+  delete customMatState[id];
+  renderMaterials();
+}
+function addCmsItem(sid){
+  const el=document.getElementById('cmsa-'+sid); const t=el.value.trim(); if(!t)return;
+  const s=customMatSections.find(x=>x.id===sid); if(!s)return;
+  s.items.push(t); customMatState[sid].push({done:false,note:''});
+  el.value=''; renderMaterials();
+}
+function delCmsItem(sid,i){
+  const s=customMatSections.find(x=>x.id===sid); if(!s)return;
+  s.items.splice(i,1); customMatState[sid].splice(i,1);
+  renderMaterials();
+}
+function togCmsItem(sid,i){
+  if(!customMatState[sid]||!customMatState[sid][i]) return;
+  customMatState[sid][i].done=!customMatState[sid][i].done;
+  renderMaterials();
+}
+function setCmsNote(sid,i,v){
+  if(customMatState[sid]&&customMatState[sid][i]) customMatState[sid][i].note=v;
+}
+function togMatItem(sid,i){matState[sid][i].done=!matState[sid][i].done;renderMaterials();}
+function setMatNote(sid,i,v){matState[sid][i].note=v;}
+function addMatItem(sid){
+  const el=document.getElementById('msa-'+sid); const t=el.value.trim(); if(!t)return;
+  const s=matSections.find(x=>x.id===sid); if(!s)return;
+  s.items.push(t); matState[sid].push({note:'',done:false});
+  el.value=''; renderMaterials();
+}
+function addMat(){
+  const k=document.getElementById('mki').value.trim(); if(!k)return;
+  customMaterials.push({id:cmNextId++,key:k,val:document.getElementById('mvi').value.trim()});
+  renderMaterials();
+}
+function updMat(id,f,v){const m=customMaterials.find(x=>x.id===id);if(m)m[f]=v;}
+function delMat(id){customMaterials=customMaterials.filter(x=>x.id!==id);renderMaterials();}
+
+// ── TABS ───────────────────────────────────────────────────
+function showTab(t,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── SAVE STATE ─────────────────────────────────────────────
+function copyForClaude(){
+  const data = localStorage.getItem('poros-cc-v1');
+  if(!data){ alert('No saved data found.'); return; }
+  navigator.clipboard.writeText(data).then(()=>{
+    const btn = document.getElementById('copyClaudeBtn');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    btn.style.background = '#22c55e';
+    btn.style.color = 'white';
+    setTimeout(()=>{ btn.textContent = orig; btn.style.background=''; btn.style.color=''; }, 2000);
+  }).catch(()=>{
+    // fallback: show data in a textarea for manual copy
+    const ta = document.createElement('textarea');
+    ta.value = data;
+    ta.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:80%;height:300px;z-index:9999;font-size:11px;padding:10px;border-radius:8px;border:2px solid #1a3a5c';
+    document.body.appendChild(ta);
+    ta.select();
+    const close = document.createElement('button');
+    close.textContent = '✕ Close';
+    close.style.cssText = 'position:fixed;top:calc(50% - 170px);left:calc(50% + 200px);z-index:10000;padding:6px 12px;border-radius:6px;border:none;background:#1a3a5c;color:white;cursor:pointer';
+    close.onclick = ()=>{ document.body.removeChild(ta); document.body.removeChild(close); };
+    document.body.appendChild(close);
+    alert('Auto-copy failed — select all text in the box and copy manually (Ctrl+A, Ctrl+C)');
+  });
+}
+// ── GITHUB GIST AUTO-SYNC ───────────────────────────────────
+let ghConfig = null;
+let gistTimer = null;
+
+function loadGhConfig(){
+  try { ghConfig = JSON.parse(localStorage.getItem('porosGithub')||'null'); } catch(e){}
+}
+function saveGhConfig(){
+  localStorage.setItem('porosGithub', JSON.stringify(ghConfig));
+}
+function setGhStatus(msg, color){
+  const el = document.getElementById('ghStatus');
+  if(el){ el.textContent = msg; el.style.color = color||'#aac'; }
+}
+function scheduleGistSave(){
+  if(!ghConfig?.token) return;
+  clearTimeout(gistTimer);
+  gistTimer = setTimeout(pushToGist, 4000);
+}
+async function pushToGist(){
+  if(!ghConfig?.token) return;
+  const data = localStorage.getItem('poros-cc-v1');
+  if(!data) return;
+  setGhStatus('⏫ syncing…','#f59e0b');
+  const body = { description:'Poros Command Center – auto sync', files:{'poros-data.json':{content:data}} };
+  const url = ghConfig.gistId
+    ? `https://api.github.com/gists/${ghConfig.gistId}`
+    : 'https://api.github.com/gists';
+  const method = ghConfig.gistId ? 'PATCH' : 'POST';
+  if(!ghConfig.gistId) body.public = false;
+  try {
+    const resp = await fetch(url,{method,headers:{'Authorization':`token ${ghConfig.token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(resp.ok){
+      const r = await resp.json();
+      if(!ghConfig.gistId){ ghConfig.gistId=r.id; ghConfig.gistUrl=r.html_url; saveGhConfig(); updateGhBtn(); }
+      setGhStatus('✅ '+new Date().toLocaleTimeString(),'#22c55e');
+    } else { setGhStatus('❌ sync error','#ef4444'); }
+  } catch(e){ setGhStatus('❌ offline','#ef4444'); }
+}
+function updateGhBtn(){
+  const btn = document.getElementById('ghSyncBtn');
+  if(!btn) return;
+  if(ghConfig?.gistId){ btn.textContent='✅ Sync'; btn.title='Connected — click to manage'; }
+  else { btn.textContent='🔗 Sync'; btn.title='Set up GitHub Gist auto-sync'; }
+}
+function ghSyncOrSetup(){
+  if(ghConfig?.token && ghConfig?.gistId){
+    // Already connected — push data now
+    const btn=document.getElementById('ghSyncBtn');
+    btn.textContent='⏫ Syncing…'; btn.disabled=true;
+    pushToGist().then(()=>{
+      btn.textContent='✅ Sync'; btn.disabled=false;
+    }).catch(()=>{ btn.textContent='🔗 Sync'; btn.disabled=false; });
+  } else {
+    openGhSetup();
+  }
+}
+function openGhSetup(){
+  const cfg = ghConfig||{};
+  const existing = cfg.gistId ? `<p style="font-size:11px;color:#888;margin:0 0 16px">Gist ID: <code>${cfg.gistId}</code> — <a href="${cfg.gistUrl||'https://gist.github.com/'+cfg.gistId}" target="_blank" style="color:#0ea5e9">view on GitHub</a></p>` : '<p style="font-size:11px;color:#888;margin:0 0 16px">A secret Gist will be created automatically on first save.</p>';
+  const ov = document.createElement('div');
+  ov.id='ghModal';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center';
+  ov.innerHTML=`<div style="background:white;border-radius:16px;padding:32px;max-width:460px;width:90%;box-shadow:0 24px 60px rgba(0,0,0,.3)">
+    <h2 style="margin:0 0 6px;color:#1a3a5c;font-size:18px">🔗 GitHub Gist Sync</h2>
+    <p style="margin:0 0 20px;color:#666;font-size:13px;line-height:1.5">Your data will auto-save to a private GitHub Gist after every change, so Claude can fetch it directly — no more copy-pasting.</p>
+    <label style="display:block;font-size:11px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">GitHub Personal Access Token</label>
+    <input id="ghTokInput" type="password" value="${cfg.token||''}" placeholder="ghp_xxxxxxxxxxxxxxxx"
+      style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;margin-bottom:16px;font-family:monospace">
+    ${existing}
+    <div style="display:flex;gap:10px">
+      <button onclick="saveGhSetup()" style="flex:1;padding:11px;background:#1a3a5c;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px">Save & Connect</button>
+      ${cfg.gistId?`<button onclick="ghConfig.gistId=null;ghConfig.gistUrl=null;saveGhConfig();updateGhBtn();document.getElementById('ghModal').remove()" style="padding:11px 14px;background:#fee2e2;color:#b91c1c;border:none;border-radius:8px;cursor:pointer;font-size:13px">Disconnect</button>`:''}
+      <button onclick="document.getElementById('ghModal').remove()" style="padding:11px 14px;background:#f0f0f0;border:none;border-radius:8px;cursor:pointer;font-size:13px">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+}
+function saveGhSetup(){
+  const tok = document.getElementById('ghTokInput').value.trim();
+  if(!tok){ alert('Please enter your GitHub token'); return; }
+  ghConfig = { token:tok, gistId:ghConfig?.gistId||null, gistUrl:ghConfig?.gistUrl||null };
+  saveGhConfig();
+  document.getElementById('ghModal').remove();
+  updateGhBtn();
+  pushToGist();
+}
+function exportState(){
+  const data = JSON.stringify({state, comments, meetings, boardItems, matState, customMaterials, strategyNotes, strategyFiles, _v:'1'});
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'poros-state-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+function importState(){
+  const input = document.createElement('input');
+  input.type='file'; input.accept='.json';
+  input.onchange = e => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const d = JSON.parse(ev.target.result);
+        if(d.state) Object.assign(state, d.state);
+        if(d.comments) Object.assign(comments, d.comments);
+        if(d.meetings) { meetings=d.meetings; mtgNextId=Math.max(...meetings.map(m=>m.id))+1; }
+        if(d.boardItems) { boardItems=d.boardItems; boardNextId=Math.max(...boardItems.map(b=>b.id),0)+1; }
+        if(d.matState) Object.assign(matState, d.matState);
+        if(d.customMaterials) customMaterials=d.customMaterials;
+        if(d.customMatSections){ customMatSections=d.customMatSections; cmsNextId=Math.max(...customMatSections.map(s=>s.id),0)+1; }
+        if(d.customMatState) Object.assign(customMatState,d.customMatState);
+        if(d.strategyNotes) Object.assign(strategyNotes, d.strategyNotes);
+        if(d.strategyFiles) Object.assign(strategyFiles, d.strategyFiles);
+        renderBoard(); renderPhases(); renderMaterials(); renderMeetings(); renderStrategy();
+        alert('State loaded ✓');
+      } catch(err){ alert('Error loading file: '+err.message); }
+    };
+    reader.readAsText(e.target.files[0]);
+  };
+  input.click();
+}
+
+// ── MEETING SUMMARY ────────────────────────────────────────
+function copyMtgSummary(mid){
+  const m = meetings.find(x=>x.id===mid);
+  if(!m) return;
+  const who = whoLabels[m.who]||m.who;
+  const lines = [`📋 ${who} — ${m.date}`, ''];
+  const open = m.tasks.filter(t=>!t.done);
+  const done = m.tasks.filter(t=>t.done);
+  if(open.length){ lines.push('Open tasks:'); open.forEach((t,i)=>lines.push(`${i+1}. ${t.text}`)); lines.push(''); }
+  if(done.length){ lines.push('Done:'); done.forEach((t,i)=>lines.push(`${i+1}. ${t.text}`)); }
+  const text = lines.join('\n');
+  // show modal with textarea so user can copy manually on any device
+  const ov = document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML=`<div style="background:white;border-radius:12px;padding:18px;width:100%;max-width:500px;box-shadow:0 4px 20px rgba(0,0,0,.3)">
+    <div style="font-weight:700;margin-bottom:10px;color:#1a3a5c">📤 Meeting Summary</div>
+    <textarea id="sum-ta" style="width:100%;height:200px;font-size:13px;border:1px solid #ddd;border-radius:6px;padding:8px;font-family:inherit;resize:vertical" readonly>${text}</textarea>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button id="sum-copy-btn" onclick="
+        const ta=document.getElementById('sum-ta');
+        ta.select();ta.setSelectionRange(0,99999);
+        try{document.execCommand('copy');document.getElementById('sum-copy-btn').textContent='✓ Copied!';}
+        catch(e){}
+      " style="flex:1;padding:8px;background:#1a3a5c;color:white;border:none;border-radius:6px;font-weight:700;cursor:pointer">📋 Copy</button>
+      <button onclick="this.closest('div[style]').remove()" style="flex:1;padding:8px;background:#eee;border:none;border-radius:6px;cursor:pointer">Close</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.onclick=e=>{if(e.target===ov)ov.remove();};
+  setTimeout(()=>{const ta=document.getElementById('sum-ta');if(ta){ta.select();ta.setSelectionRange(0,99999);}},100);
+}
+
+// ── EXPORT PDF ─────────────────────────────────────────────
+function exportPDF(){
+  const activeTab = document.querySelector('.tab-panel.active');
+  const tabId = activeTab ? activeTab.id.replace('tab-','') : 'phases';
+  let title = 'Poros';
+  let content = '';
+  const date = new Date().toLocaleDateString('en-GB');
+
+  if(tabId==='phases'){
+    title = 'Poros — Construction Checklist';
+    for(const ph in phaseData){
+      const pd = phaseData[ph];
+      content += `<h2 style="color:#1a3a5c;margin-top:22px;margin-bottom:4px">${pd.label}</h2>`;
+      for(const cat in pd){
+        if(cat==='label') continue;
+        const cd = pd[cat];
+        const sid = ph+'-'+cat;
+        content += `<h3 style="color:#555;margin:10px 0 3px;font-size:14px">${cd.label}</h3>`;
+        (cd.items||[]).forEach((item,i)=>{
+          const checked = state[sid]&&state[sid][i];
+          content += `<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #f0f0f0">
+            <span style="flex-shrink:0">${checked?'☑':'☐'}</span>
+            <span style="${checked?'text-decoration:line-through;color:#aaa':'color:#222'};font-size:13px">${item}</span>
+          </div>`;
+        });
+      }
+    }
+  } else if(tabId==='meetings'){
+    title = 'Poros — Meeting Tasks';
+    meetings.forEach(m=>{
+      const who = whoLabels[m.who]||m.who;
+      content += `<h2 style="color:#1a3a5c;margin-top:20px;margin-bottom:4px">${who} — ${m.date}</h2>`;
+      (m.tasks||[]).forEach(t=>{
+        content += `<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span style="flex-shrink:0">${t.done?'☑':'☐'}</span>
+          <span style="${t.done?'text-decoration:line-through;color:#aaa':'color:#222'};font-size:13px">${t.text}</span>
+        </div>`;
+      });
+      if(!m.tasks||!m.tasks.length) content += `<p style="color:#bbb;font-size:13px">No tasks</p>`;
+    });
+  } else if(tabId==='materials'){
+    title = 'Poros — Materials';
+    matSections.forEach(s=>{
+      content += `<h2 style="color:#1a3a5c;margin-top:20px;margin-bottom:4px">${s.label}</h2>`;
+      s.items.forEach((item,i)=>{
+        const ms = matState[s.id]&&matState[s.id][i];
+        const done = ms&&ms.done;
+        content += `<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #f0f0f0">
+          <span style="flex-shrink:0">${done?'☑':'☐'}</span>
+          <span style="${done?'text-decoration:line-through;color:#aaa':'color:#222'};font-size:13px">${item}${ms&&ms.note?` — <em>${ms.note}</em>`:''}</span>
+        </div>`;
+      });
+    });
+  } else if(tabId==='board'){
+    title = 'Poros — My Reminders';
+    const open=boardItems.filter(b=>!b.done);
+    const done=boardItems.filter(b=>b.done);
+    if(open.length){ content+=`<h2 style="color:#1a3a5c;margin-top:10px">To Handle</h2>`; open.forEach(b=>{ content+=`<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid #f0f0f0"><span>☐</span><span style="font-size:13px">${b.text}</span></div>`; }); }
+    if(done.length){ content+=`<h2 style="color:#aaa;margin-top:20px">Done</h2>`; done.forEach(b=>{ content+=`<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid #f0f0f0"><span>☑</span><span style="text-decoration:line-through;color:#aaa;font-size:13px">${b.text}</span></div>`; }); }
+  } else if(tabId==='strategy'){
+    title = 'Poros — Strategy';
+    strategySections.forEach(s=>{
+      const notes=strategyNotes[s.id]||'';
+      if(!notes.trim()) return;
+      content += `<h2 style="color:#1a3a5c;margin-top:20px;margin-bottom:6px">${s.icon} ${s.label}</h2>
+        <p style="font-size:13px;color:#333;white-space:pre-wrap;line-height:1.7">${notes}</p>`;
+    });
+  }
+
+  const wrap = `<div style="max-width:700px;margin:0 auto;font-family:sans-serif;padding:16px">
+    <h1 style="color:#1a3a5c;margin-bottom:2px">${title}</h1>
+    <p style="color:#888;font-size:12px;margin-top:0">Exported ${date}</p><hr>${content}</div>`;
+
+  const ov = document.createElement('div');
+  ov.id='pdf-ov';
+  ov.style.cssText='position:fixed;inset:0;background:white;z-index:99999;overflow-y:auto';
+  ov.innerHTML=`<div style="position:sticky;top:0;background:white;border-bottom:2px solid #d0e4f7;padding:10px 16px;display:flex;gap:10px;align-items:center;z-index:1">
+    <strong style="color:#1a3a5c;flex:1">📄 ${title}</strong>
+    <button onclick="window.print()" style="background:#1a3a5c;color:white;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">🖨️ Print / PDF</button>
+    <button onclick="document.getElementById('pdf-ov').remove()" style="background:#eee;border:none;padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer">✕ Close</button>
+  </div>${wrap}`;
+  document.body.appendChild(ov);
+}
+
+// ── STRATEGY ───────────────────────────────────────────────
+const strategySections = [
+  { id:'interior',   icon:'🛋️', label:'Interior Design',   placeholder:'Interior style direction, materials, furniture, built-ins, color palette...' },
+  { id:'landscape',  icon:'🌿', label:'Landscape Design',  placeholder:'Landscape vision, plant choices, outdoor spaces, pathways, pool area, amphitheater...' },
+  { id:'branding',   icon:'✨', label:'Branding',           placeholder:'Brand identity for Lefkada Retreat / Poros — name, feel, logo direction, guest experience...' },
+  { id:'marketing',  icon:'📣', label:'Marketing',          placeholder:'Target audience, positioning, channels, launch strategy, pricing, photography...' },
+];
+let strategyNotes = {};
+let strategyOpen = {};
+let strategyFiles = {};
+
+function renderStrategy(){
+  let h='<div style="padding:12px">';
+  strategySections.forEach(s=>{
+    const open=strategyOpen[s.id]===true;
+    const hasNotes=strategyNotes[s.id]&&strategyNotes[s.id].trim().length>0;
+    const files=strategyFiles[s.id]||[];
+    const hasFiles=files.length>0;
+    const hasContent=hasNotes||hasFiles;
+
+    let fileCards='';
+    files.forEach((f,fi)=>{
+      const icon = f.type==='application/pdf'?'📄': f.type&&f.type.startsWith('image/')?'🖼️':'📎';
+      const sizeStr = f.size>1024*1024 ? (f.size/1024/1024).toFixed(1)+'MB' : Math.round(f.size/1024)+'KB';
+      fileCards+=`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #dde8f5;border-radius:8px;margin-bottom:6px;background:#f9fbff">
+        <span style="font-size:22px">${icon}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:#1a3a5c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.name}</div>
+          <div style="font-size:11px;color:#aaa">${sizeStr}</div>
+        </div>
+        <button onclick="openStratFile('${s.id}',${fi})" style="background:#1a3a5c;color:white;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;flex-shrink:0">Open</button>
+        <button onclick="delStratFile('${s.id}',${fi})" style="background:none;border:1px solid #ddd;color:#aaa;padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;flex-shrink:0">×</button>
+      </div>`;
+    });
+
+    h+=`<div style="border:1px solid #dde8f5;border-radius:10px;margin-bottom:10px;overflow:hidden">
+      <div onclick="toggleStrategy('${s.id}')" style="display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;background:${open?'#e8f2fc':'#f4f8fd'}">
+        <span style="font-size:18px">${s.icon}</span>
+        <span style="font-weight:700;color:#1a3a5c;flex:1;font-size:14px">${s.label}</span>
+        ${hasFiles?`<span style="font-size:11px;color:#1a3a5c;background:#d0e8ff;border-radius:10px;padding:2px 7px">${files.length} file${files.length>1?'s':''}</span>`:''}
+        ${hasNotes?'<span style="width:8px;height:8px;background:#2d7a4a;border-radius:50%;display:inline-block"></span>':''}
+        <span style="font-size:12px;color:#aaa">${open?'▼':'▶'}</span>
+      </div>
+      <div id="strat-body-${s.id}" style="display:${open?'block':'none'};padding:12px 14px;background:white">
+        ${fileCards}
+        <div style="margin-bottom:10px">
+          <input type="file" id="sfi-${s.id}" accept="*/*" style="position:absolute;opacity:0;width:1px;height:1px" onchange="uploadStratFile('${s.id}',this)">
+          <button onclick="document.getElementById('sfi-${s.id}').click()" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;background:#f4f8fd;border:1px dashed #aac8e8;border-radius:8px;padding:10px 16px;font-size:13px;color:#1a3a5c;font-weight:600;touch-action:manipulation;min-height:44px">
+            📎 Attach file
+          </button>
+        </div>
+        <textarea
+          id="strat-ta-${s.id}"
+          placeholder="${s.placeholder}"
+          onchange="saveStrategy('${s.id}',this.value)"
+          oninput="saveStrategy('${s.id}',this.value)"
+          style="width:100%;min-height:100px;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:14px;line-height:1.6;resize:vertical;font-family:inherit;color:#2c2c2c;box-sizing:border-box"
+        >${strategyNotes[s.id]||''}</textarea>
+      </div>
+    </div>`;
+  });
+  h+='</div>';
+  document.getElementById('strategy-container').innerHTML=h;
+}
+
+function toggleStrategy(id){
+  strategyOpen[id]=!strategyOpen[id];
+  renderStrategy();
+  if(strategyOpen[id]){
+    setTimeout(()=>{
+      const ta=document.getElementById('strat-ta-'+id);
+      if(ta) ta.focus();
+    },50);
+  }
+}
+
+function saveStrategy(id,val){
+  strategyNotes[id]=val;
+}
+
+function uploadStratFile(sid,input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    if(!strategyFiles[sid]) strategyFiles[sid]=[];
+    strategyFiles[sid].push({name:file.name, type:file.type, size:file.size, dataUrl:e.target.result});
+    renderStrategy();
+  };
+  reader.readAsDataURL(file);
+}
+
+function dataUrlToObjectUrl(dataUrl){
+  const [header,data]=dataUrl.split(',');
+  const mime=header.match(/:(.*?);/)[1];
+  const binary=atob(data);
+  const arr=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) arr[i]=binary.charCodeAt(i);
+  return {url:URL.createObjectURL(new Blob([arr],{type:mime})), mime};
+}
+
+function openStratFile(sid,fi){
+  const f=(strategyFiles[sid]||[])[fi]; if(!f) return;
+  document.querySelectorAll('#strat-file-ov').forEach(e=>e.remove());
+
+  const {url,mime}=dataUrlToObjectUrl(f.dataUrl);
+  const ov=document.createElement('div');
+  ov.id='strat-file-ov';
+  ov.style.cssText='position:fixed;inset:0;background:white;z-index:99999;display:flex;flex-direction:column';
+
+  const isImage=mime.startsWith('image/');
+  const viewer=isImage
+    ? `<div style="flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;background:#111"><img src="${url}" style="max-width:100%;max-height:100%;object-fit:contain"></div>`
+    : `<object data="${url}" type="application/pdf" style="flex:1;width:100%;border:none">
+        <div style="padding:30px;text-align:center;color:#555">
+          <p style="font-size:15px">PDF cannot be displayed inline on this browser.</p>
+          <a href="${url}" download="${f.name}" style="display:inline-block;margin-top:12px;background:#1a3a5c;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700">⬇ Download to view</a>
+        </div>
+      </object>`;
+
+  ov.innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:2px solid #d0e4f7;background:white;flex-shrink:0">
+      <strong style="color:#1a3a5c;flex:1;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.name}</strong>
+      <a href="${url}" download="${f.name}" style="background:#eee;color:#333;border:none;padding:8px 12px;border-radius:6px;font-size:12px;cursor:pointer;text-decoration:none;flex-shrink:0">⬇</a>
+      <button onclick="document.getElementById('strat-file-ov').remove()" style="background:#1a3a5c;color:white;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0">✕ Close</button>
+    </div>
+    ${viewer}`;
+  document.body.appendChild(ov);
+}
+
+function delStratFile(sid,fi){
+  if(!strategyFiles[sid]) return;
+  strategyFiles[sid].splice(fi,1);
+  renderStrategy();
+}
+
+// ── PDF → TASKS ────────────────────────────────────────────
+async function extractPdfToTasks(mid, input){
+  const file = input.files[0]; if(!file) return;
+  input.value = '';
+
+  if(typeof pdfjsLib==='undefined'){
+    alert('PDF library not loaded. Please check your internet connection.'); return;
+  }
+
+  // Show loading overlay
+  const ov = document.createElement('div');
+  ov.id = 'pdf-task-ov';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center';
+  ov.innerHTML = `<div style="background:white;border-radius:14px;padding:28px 24px;max-width:500px;width:90%;max-height:80vh;display:flex;flex-direction:column;gap:14px">
+    <div style="font-weight:700;font-size:16px;color:#1a3a5c">📄 Reading PDF…</div>
+    <div id="pdf-task-status" style="color:#888;font-size:13px">Extracting text…</div>
+  </div>`;
+  document.body.appendChild(ov);
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+    let fullText = '';
+    for(let p=1; p<=pdf.numPages; p++){
+      const page = await pdf.getPage(p);
+      const content = await page.getTextContent();
+      fullText += content.items.map(i=>i.str).join(' ') + '\n';
+    }
+
+    // Parse into task candidates
+    const lines = fullText.split(/[\n•\-–—]/)
+      .map(l=>l.replace(/^\s*[\d]+[.)]\s*/, '').trim())  // strip numbering
+      .filter(l=>l.length>8 && l.length<300)              // meaningful length
+      .filter(l=>!/^(page|pages|\d+)$/i.test(l));         // strip page numbers
+
+    // Remove duplicates
+    const unique = [...new Set(lines)];
+
+    if(!unique.length){
+      ov.remove();
+      alert('No tasks found in this PDF. Try a different file.');
+      return;
+    }
+
+    // Show selection UI
+    const selected = new Set(unique.map((_,i)=>i)); // all selected by default
+    const renderOv = () => {
+      ov.innerHTML = `<div style="background:white;border-radius:14px;padding:0;max-width:520px;width:90%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden">
+        <div style="padding:18px 20px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px">
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:15px;color:#1a3a5c">📄 ${file.name}</div>
+            <div style="font-size:12px;color:#888;margin-top:2px">Select tasks to add to this meeting</div>
+          </div>
+          <button onclick="document.getElementById('pdf-task-ov').remove()" style="background:none;border:1px solid #ddd;border-radius:6px;padding:6px 12px;cursor:pointer;color:#888">Cancel</button>
+        </div>
+        <div style="overflow-y:auto;flex:1;padding:10px 16px">
+          ${unique.map((line,i)=>`
+            <label style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #f4f4f4;cursor:pointer">
+              <input type="checkbox" ${selected.has(i)?'checked':''} onchange="pdfTaskToggle(${i},this.checked)" style="width:18px;height:18px;flex-shrink:0;margin-top:1px;accent-color:#1a3a5c">
+              <span style="font-size:13px;color:#333;line-height:1.4">${line}</span>
+            </label>`).join('')}
+        </div>
+        <div style="padding:14px 20px;border-top:1px solid #eee;display:flex;gap:8px">
+          <button onclick="pdfTaskAddAll(${mid})" style="flex:1;background:#1a3a5c;color:white;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Add Selected (${selected.size})</button>
+        </div>
+      </div>`;
+      // store state on window for callbacks
+      window._pdfLines = unique;
+      window._pdfSelected = selected;
+      window._pdfRender = renderOv;
+    };
+    window.pdfTaskToggle = (i, checked) => { checked ? window._pdfSelected.add(i) : window._pdfSelected.delete(i); window._pdfRender(); };
+    window.pdfTaskAddAll = (mid) => {
+      const m = meetings.find(x=>x.id===mid); if(!m) return;
+      window._pdfLines.forEach((line,i)=>{
+        if(window._pdfSelected.has(i)){
+          m.tasks.push({id:mtgTid++, text:line, done:false, movedTo:null});
+        }
+      });
+      document.getElementById('pdf-task-ov').remove();
+      renderMeetings();
+    };
+    renderOv();
+
+  } catch(err){
+    ov.remove();
+    alert('Could not read PDF: '+err.message);
+  }
+}
+
+// ── AUTO SAVE / RESTORE ────────────────────────────────────
+const LS_KEY = 'poros-cc-v1';
+const IDB_NAME = 'poros-files-v1';
+const IDB_STORE = 'files';
+
+// IndexedDB for files (no size limit)
+function idbOpen(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(IDB_NAME,1);
+    r.onupgradeneeded=e=>e.target.result.createObjectStore(IDB_STORE);
+    r.onsuccess=e=>res(e.target.result);
+    r.onerror=e=>rej(e);
+  });
+}
+function idbSaveFiles(){
+  idbOpen().then(db=>{
+    const tx=db.transaction(IDB_STORE,'readwrite');
+    const st=tx.objectStore(IDB_STORE);
+    st.put(strategyFiles,'strategyFiles');
+    st.put(matFiles,'matFiles');
+    st.put(phasePhotos,'phasePhotos');
+  }).catch(e=>console.warn('IDB save failed',e));
+}
+function idbLoadFiles(){
+  return idbOpen().then(db=>{
+    return new Promise((res,rej)=>{
+      const tx=db.transaction(IDB_STORE,'readonly');
+      const st=tx.objectStore(IDB_STORE);
+      const out={strategyFiles:{},matFiles:{},phasePhotos:{}};
+      let pending=3;
+      const done=()=>{ if(--pending===0) res(out); };
+      const req1=st.get('strategyFiles');
+      req1.onsuccess=e=>{out.strategyFiles=e.target.result||{};done();};
+      req1.onerror=done;
+      const req2=st.get('matFiles');
+      req2.onsuccess=e=>{out.matFiles=e.target.result||{};done();};
+      req2.onerror=done;
+      const req3=st.get('phasePhotos');
+      req3.onsuccess=e=>{out.phasePhotos=e.target.result||{};done();};
+      req3.onerror=done;
+    });
+  }).catch(()=>({strategyFiles:{},matFiles:{},phasePhotos:{}}));
+}
+
+// localStorage for everything else
+function autoSave(){
+  try {
+    // Try to include files in the main save (most reliable cross-device)
+    const data=JSON.stringify({state,comments,meetings,boardItems,matState,customMaterials,customMatSections,customMatState,strategyNotes,strategyFiles,matFiles,phasePhotos,fixList,flNextId,_v:'4'});
+    localStorage.setItem(LS_KEY,data);
+  } catch(e){
+    // Quota exceeded — save state without files, keep files in IDB
+    try {
+      const data=JSON.stringify({state,comments,meetings,boardItems,matState,customMaterials,customMatSections,customMatState,strategyNotes,_v:'2'});
+      localStorage.setItem(LS_KEY,data);
+    } catch(e2){ console.warn('LS save failed',e2.message); }
+    idbSaveFiles(); // backup for large files
+  }
+  scheduleGistSave();
+}
+function autoLoad(){
+  try {
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    const d=JSON.parse(raw);
+    if(d.state) Object.assign(state,d.state);
+    if(d.comments) Object.assign(comments,d.comments);
+    if(d.meetings){
+      // Keep saved meetings (with their done states), but add back any hardcoded
+      // meetings that are missing from the saved list (e.g. added in a new version)
+      const savedIds=new Set(d.meetings.map(m=>m.id));
+      const missing=meetings.filter(m=>!savedIds.has(m.id));
+      meetings=[...d.meetings,...missing];
+      mtgNextId=Math.max(...meetings.map(m=>m.id))+1;
+      // Deduplicate task IDs — fix any conflicts from previous reloads
+      const seenTids=new Set();
+      let nextTid=Math.max(0,...meetings.flatMap(m=>(m.tasks||[]).map(t=>t.id)))+1;
+      meetings.forEach(m=>(m.tasks||[]).forEach(t=>{
+        if(seenTids.has(t.id)) t.id=nextTid++;
+        seenTids.add(t.id);
+      }));
+      mtgTid=nextTid;
+    }
+    if(d.boardItems){ boardItems=d.boardItems; boardNextId=Math.max(...boardItems.map(b=>b.id),0)+1; }
+    if(d.matState) Object.assign(matState,d.matState);
+    if(d.customMaterials) customMaterials=d.customMaterials;
+    if(d.customMatSections){ customMatSections=d.customMatSections; cmsNextId=Math.max(...customMatSections.map(s=>s.id),0)+1; }
+    if(d.customMatState) Object.assign(customMatState,d.customMatState);
+    if(d.strategyNotes) Object.assign(strategyNotes,d.strategyNotes);
+    if(d.strategyFiles) Object.assign(strategyFiles,d.strategyFiles);
+    if(d.matFiles) Object.assign(matFiles,d.matFiles);
+    if(d.phasePhotos) Object.assign(phasePhotos,d.phasePhotos);
+    if(d.fixList) Object.assign(fixList,d.fixList);
+    if(d.flNextId) flNextId=d.flNextId;
+  } catch(e){}
+}
+
+// Patch renders to auto-save
+const _origRenderBoard=renderBoard,_origRenderPhases=renderPhases,
+      _origRenderMaterials=renderMaterials,_origRenderMeetings=renderMeetings,
+      _origRenderStrategy=renderStrategy;
+renderBoard    =function(){_origRenderBoard();    autoSave();};
+renderPhases   =function(){_origRenderPhases();   autoSave();};
+renderMaterials=function(){_origRenderMaterials();autoSave();};
+renderMeetings =function(){_origRenderMeetings(); autoSave();};
+renderStrategy =function(){_origRenderStrategy(); autoSave();};
+const _origSaveStrategy=saveStrategy;
+saveStrategy=function(id,val){_origSaveStrategy(id,val);autoSave();};
+
+// Patch uploadStratFile to save to both LS (via renderStrategy→autoSave) and IDB
+const _origUploadStratFile=uploadStratFile;
+uploadStratFile=function(sid,input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    if(!strategyFiles[sid]) strategyFiles[sid]=[];
+    strategyFiles[sid].push({name:file.name,type:file.type,size:file.size,dataUrl:e.target.result});
+    idbSaveFiles(); // always save to IDB as backup
+    renderStrategy(); // triggers autoSave → tries to put files in localStorage too
+  };
+  reader.readAsDataURL(file);
+};
+
+// Patch delStratFile to also save to IDB
+const _origDelStratFile=delStratFile;
+delStratFile=function(sid,fi){
+  _origDelStratFile(sid,fi);
+  idbSaveFiles();
+};
+
+// ── SEED DATA (from last known state) ──────────────────────
+const SEED_DATA = {"state":{"structural-architect":[false,false,false,true,true,true],"structural-constructor":[false,false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"structural-electricity":[false,false,false,false,false,false],"structural-landscape":[false,false,false,false,false,false,false,false,false,false,false,false,false],"middle-architect":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"middle-constructor":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"middle-electricity":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"middle-landscape":[false,false,false,false,false,false,false,false,false,false,true,false],"finishing-architect":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"finishing-constructor":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"finishing-electricity":[false,false,false,false],"finishing-landscape":[false,false,false,false,false,false,false]},"comments":{"structural-architect":["","","","","",""],"structural-constructor":["","","","","","","","","","","","","see in the middle of the wall","","","","","","","","","","","","","","",""],"structural-electricity":["","","","","",""],"structural-landscape":["","","","","","","","","","","","",""],"middle-architect":["","","","","","","","","","","","","","","","","","",""],"middle-constructor":["","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],"middle-electricity":["","","","","","","","","","","","","","","","","","","","","","","","","","","",""],"middle-landscape":["","","","","","","","","","","",""],"finishing-architect":["","","","","","","","","","","","","","",""],"finishing-constructor":["","","","","","","","","","","","","","","","","","",""],"finishing-electricity":["","","",""],"finishing-landscape":["","","","","","",""]},"meetings":[{"id":14,"who":"designer","date":"2026-06-24","meetType":"weekly","tasks":[{"id":168,"text":"Built kitchens plans","done":false,"movedTo":null},{"id":169,"text":"outside kitchen","done":false,"movedTo":null}]},{"id":12,"who":"landscape","date":"2026-06-23","meetType":"lefkada","tasks":[{"id":157,"text":"Next stage","done":false,"movedTo":null},{"id":164,"text":"meeting - extra works/hours or project","done":false,"movedTo":null}]},{"id":11,"who":"engineer","date":"2026-06-19","meetType":"lefkada","tasks":[{"id":62,"text":"Cleaning of the plot - why the small one ?","done":false,"movedTo":null},{"id":63,"text":"CADASTRE STATUS - Desimi + Poros","done":false,"movedTo":null},{"id":64,"text":"Small plot - Architectual commitee","done":false,"movedTo":null},{"id":66,"text":"FOOD AND BEVERAGE LISENCE - outside kitchen","done":false,"movedTo":null},{"id":127,"text":"ARCONS Updates","done":false,"movedTo":null}]},{"id":10,"who":"architect","date":"2026-06-23","meetType":"lefkada","tasks":[{"id":74,"text":"OUTSIDE Buidling cannot happen in winter","done":false,"movedTo":null},{"id":99,"text":"Mark boundaries of neighboring plots 15m from boundary","done":false,"movedTo":null},{"id":79,"text":"LANDSCAPE DESGING","done":false,"movedTo":null},{"id":108,"text":"Upper and lower entrances confirmed + fences","done":false,"movedTo":null},{"id":112,"text":"Accessibility plan","done":false,"movedTo":null},{"id":125,"text":"Access D↔C: Unit D for chef, Unit C optional non-rental","done":false,"movedTo":null},{"id":110,"text":"Parking entrance and exit design","done":false,"movedTo":null},{"id":109,"text":"Minibus access confirmed","done":false,"movedTo":null},{"id":111,"text":"Pathways - wide enough for golf cart (2.5 m)","done":false,"movedTo":null},{"id":131,"text":"AREAS TO LOOK AFTER - between the units, borders of the plot","done":false,"movedTo":null},{"id":130,"text":"TERRACE Unit A","done":false,"movedTo":null},{"id":98,"text":"Divert stream away from property - can we collect the water","done":false,"movedTo":null},{"id":104,"text":"Amphitheatre location","done":false,"movedTo":null},{"id":102,"text":"Pool - Water tank for irrigation","done":false,"movedTo":null},{"id":103,"text":"Final outdoor shower location","done":false,"movedTo":null},{"id":106,"text":"Plant irrigation and drainage","done":false,"movedTo":null},{"id":132,"text":"water tank location","done":false,"movedTo":null},{"id":105,"text":"studio location + stairs","done":false,"movedTo":null},{"id":107,"text":"Water tap near SUP boards","done":false,"movedTo":null},{"id":65,"text":"Solar panel locations - how to cover ?","done":false,"movedTo":null},{"id":96,"text":"Simple concrete platform on small plot for temporary use","done":false,"movedTo":null},{"id":97,"text":"Relocate future electrical line on small plot","done":false,"movedTo":null}]},{"id":9,"who":"accountant","date":"2026-06-18","meetType":"weekly","tasks":[]},{"id":5,"who":"architect","date":"2026-06-18","meetType":"weekly","tasks":[{"id":75,"text":"[Open] Exterior landscaping","done":false,"movedTo":null},{"id":76,"text":"[Materials] Review and update material selections","done":false,"movedTo":null},{"id":182,"text":"Built furniture plans","done":false,"movedTo":null},{"id":77,"text":"Built-in outdoor planters including around pool area – who designs? Including drainage and irriga","done":false,"movedTo":null},{"id":78,"text":"Urgent: renderings / visualizations","done":false,"movedTo":null}]},{"id":2,"who":"onsite","date":"2026-06-18","meetType":"lefkada","tasks":[{"id":16,"text":"Check the project according to the document","done":false,"movedTo":null},{"id":17,"text":"Take a tape measure","done":false,"movedTo":null},{"id":20,"text":"Construction schedule - cannot go into winter, all will be delayed a year","done":false,"movedTo":null},{"id":21,"text":"Cleaning for the weed - fire regulation","done":false,"movedTo":null},{"id":23,"text":"Boundaries of the project","done":false,"movedTo":null},{"id":24,"text":"Parking entrances and paths","done":false,"movedTo":null},{"id":60,"text":"Room dimensions match approved plans","done":false,"movedTo":null},{"id":61,"text":"Wall positions match plans","done":false,"movedTo":null},{"id":133,"text":"Wall thickness correct","done":false,"movedTo":null},{"id":134,"text":"Wall niches confirmed","done":false,"movedTo":null},{"id":135,"text":"Ceiling heights confirmed","done":false,"movedTo":null},{"id":136,"text":"Hot tub location relative to built-in bench","done":false,"movedTo":null},{"id":67,"text":"Floor levels checked","done":false,"movedTo":null},{"id":68,"text":"Wet areas clearly identified","done":false,"movedTo":null},{"id":69,"text":"Drainage point on 1st-floor balconies — extremely important for lower unit","done":false,"movedTo":null},{"id":71,"text":"Drainage for hot tub area","done":false,"movedTo":null},{"id":73,"text":"Break extra terrace built in Unit A","done":false,"movedTo":null},{"id":137,"text":"Ensure prep for washing machine under the stairs","done":false,"movedTo":null},{"id":138,"text":"Pool — create 1.50 m depth","done":false,"movedTo":null},{"id":139,"text":"4 lights in the pool","done":false,"movedTo":null},{"id":140,"text":"Plumbing points confirmed","done":false,"movedTo":null},{"id":80,"text":"Sink positions confirmed","done":false,"movedTo":null},{"id":81,"text":"Shower mixer positions confirmed","done":false,"movedTo":null},{"id":84,"text":"Waterproofing applied in wet areas","done":false,"movedTo":null},{"id":89,"text":"FIX - Electrical sockets positioned","done":false,"movedTo":null},{"id":90,"text":"FIX - Switch positions confirmed","done":false,"movedTo":null},{"id":91,"text":"Lighting points aligned with layout","done":false,"movedTo":null},{"id":118,"text":"Electrical + water prep for hot tub in each unit","done":false,"movedTo":null},{"id":126,"text":"FIX - Toilet position in the middle","done":false,"movedTo":null},{"id":159,"text":"Show where is the water meter","done":false,"movedTo":null},{"id":160,"text":"Show where will the ac engines will be","done":false,"movedTo":null}]},{"id":3,"who":"viki","date":"2026-06-22","meetType":"lefkada","tasks":[]},{"id":4,"who":"accountant","date":"2026-06-18","meetType":"lefkada","tasks":[{"id":40,"text":"Fotini - Check electricity and water for the plot","done":false,"movedTo":null},{"id":41,"text":"Anthi - May Invoice","done":false,"movedTo":null},{"id":42,"text":"Anthi - Next invoice: Reduce 600 Euros of the tax paid from the last invoice","done":false,"movedTo":null}]},{"id":1,"who":"viki","date":"2026-06-26","meetType":"weekly","tasks":[{"id":156,"text":"FOOD AND BEVERAGE LISENCE - Ioannis Mavrokefalos  - preparations for kitchen unit D + basement including electricity and sewage","done":false,"movedTo":null},{"id":179,"text":"INSULATION - Water insulation - 3 AQUAMAT + BLACK MEMBRANE - PICTURES","done":false,"movedTo":null},{"id":185,"text":"INSULATION - Thermal for the wall ? Thermal HEAT for the roof ? - PICTURES","done":false,"movedTo":null},{"id":167,"text":"Built closets - did AKIS sent plan ? from which material also the BUILT KITCHENS","done":false,"movedTo":null},{"id":143,"text":"Aluminium","done":false,"movedTo":null},{"id":158,"text":"Sortiris check - electricity, plumbing, room measurement - UNIT A +B","done":false,"movedTo":null},{"id":191,"text":"kitchen tiles","done":false,"movedTo":null},{"id":186,"text":"Unit D Secondary door in kitchen -  have to open towards inside ?","done":false,"movedTo":null},{"id":153,"text":"FIX List- Toilet inner cistern, hight of the sockets, missing switches, break the extra terrace, add pool cement to be 1.5","done":false,"movedTo":null},{"id":166,"text":"Unit B - first floor bed wall should be in one line","done":false,"movedTo":null},{"id":147,"text":"ELECTRICITY - Which venta prep for each bathroom with no window + toilet pump for 2 basement","done":false,"movedTo":null},{"id":161,"text":"AC - Final positions - behind or upper terrace = extra costs - We estimate that the extra cost for the cement base and metallic structure will be about 600-700 euros.","done":false,"movedTo":null},{"id":152,"text":"Camera onsite","done":false,"movedTo":null},{"id":190,"text":"Meeting 31/7 - can I meet pergola guy for the studio","done":false,"movedTo":null},{"id":146,"text":"Outdoor development - plan and materials","done":false,"movedTo":null},{"id":175,"text":"Pergola extension - I need to know the costs of the pergola for the studio including glass","done":false,"movedTo":null},{"id":149,"text":"Printed plans big scale - interior + built furniture + electricity + facades","done":false,"movedTo":null},{"id":150,"text":"Status of the changes to the authorities - Alexandros - what was included ? Connection between units for future sale","done":false,"movedTo":null},{"id":151,"text":"Internet infrastructure (Starlink) - Thomas","done":false,"movedTo":null},{"id":70,"text":"Photos - send before closing walls","done":false,"movedTo":null},{"id":154,"text":"Coating - see vasiliki","done":false,"movedTo":null},{"id":155,"text":"Extra costs — ELECTRICITY","done":false,"movedTo":null},{"id":177,"text":"Changes - deleted items like studio built area","done":false,"movedTo":null},{"id":181,"text":"kitchen unit D will update","done":false,"movedTo":null},{"id":187,"text":"Tile grout - choosing - רובה לאריחים","done":false,"movedTo":"PAINT and coating"},{"id":188,"text":"Coloring - lime wash","done":false,"movedTo":"PAINT and coating"},{"id":189,"text":"Costs - what was the value of the built studio area ?","done":false,"movedTo":null},{"id":192,"text":"Built Kitchens - A B C","done":false,"movedTo":null},{"id":193,"text":"Built sofas - Back included where is no wall","done":false,"movedTo":null},{"id":194,"text":"Built closets","done":false,"movedTo":null},{"id":195,"text":"Built Bathroom sinks - is this included ? Patiti","done":false,"movedTo":null},{"id":196,"text":"Aluminium email","done":false,"movedTo":null},{"id":197,"text":"Sink not Patiti - BOTSIOS OLD ORDER","done":false,"movedTo":null},{"id":198,"text":"Alexandros - make sure he has also the changes of the handicapt room to the kitchen","done":false,"movedTo":null}]}],"boardItems":[{"id":2,"text":"Think about materials I have to check - kitchen, outside kitchen, bed+backs","date":"","done":false},{"id":1,"text":"prepare the list for meeting with site manager","date":"2026-06-18","done":true}],"matState":{"principles":[{"note":"","done":false},{"note":"","done":false}],"roofs":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"builtin":[{"note":"Built seat - 30 cm hight\nDepth- all is shown in the plans Ideal depth is 90cm.\nBack - please specify the dimension of the back of the sofa where there isn't a wall - should be 80 cm hight from floor. \nSides on the sides you have the measurements \n\n","done":false},{"note":"Built bathroom sinks + shelf cabinet\nPlease make sure sinks are from Patiti - set the measurements for sinks - 40 depth + 50 width\nhight of cabinet - 90","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"cladding":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"floor-int":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"floor-ext":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"doors":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"windows":[{"note":"Color 1019\n","done":false},{"note":"Handles Toulon black ","done":false},{"note":"Windows\nOpening and tilting \nNets vertical black","done":false},{"note":"Big opening 180\nSliding \nDark nets\nDark glass\nOption for interior triplex","done":false},{"note":"","done":false},{"note":"B teacher room + D basement + kitchen D\nKey mechanism \nHalf Panel + half glass milky \nInside outside handle should be similar to the \nNets for all","done":false},{"note":"Towards outside\nMagnet \n","done":false}],"pergolas":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"railings":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"cabinets":[{"note":"","done":false},{"note":"","done":false}],"kitchen-s":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":true},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"kitchen-l":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"bathrooms":[{"note":"","done":false},{"note":"","done":false},{"note":"Patiti - set the measurements for sinks - 40 depth + 50 width\nSet the measurements for the cabinets","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"stairs":[{"note":"","done":false},{"note":"","done":false}],"electricity":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"pool":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"studio":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"amphitheater":[{"note":"","done":false}],"garden":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}],"treatment":[{"note":"","done":false}],"quantities":[{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false},{"note":"","done":false}]},"customMaterials":[{"id":1,"key":"Project schedule - Are we on track?","val":""}],"strategyNotes":{},"strategyFiles":{},"_v":"4","customMatSections":[{"id":1,"label":"PAINT and coating","items":["Coloring - lime wash","Tile grout - choosing - רובה לאריחים"]}],"customMatState":{"1":[{"done":false,"note":""},{"done":false,"note":""}]},"matFiles":{},"phasePhotos":{},"fixList":{"fl-structural":[],"fl-middle":[],"fl-finishing":[]},"flNextId":1};
+
+// ── INIT ───────────────────────────────────────────────────
+loadGhConfig();
+initState();
+initFixList();
+initMatState();
+// Pre-load seed data so local preview shows real content
+(function applySeed(){
+  const d=SEED_DATA;
+  if(d.state) Object.assign(state,d.state);
+  if(d.comments) Object.assign(comments,d.comments);
+  if(d.meetings){
+    const savedIds=new Set(d.meetings.map(m=>m.id));
+    const missing=meetings.filter(m=>!savedIds.has(m.id));
+    meetings=[...d.meetings,...missing];
+    mtgNextId=Math.max(...meetings.map(m=>m.id))+1;
+    const seenTids=new Set();
+    let nextTid=Math.max(0,...meetings.flatMap(m=>(m.tasks||[]).map(t=>t.id)))+1;
+    meetings.forEach(m=>(m.tasks||[]).forEach(t=>{ if(seenTids.has(t.id)) t.id=nextTid++; seenTids.add(t.id); }));
+    mtgTid=nextTid;
+  }
+  if(d.boardItems){ boardItems=d.boardItems; boardNextId=Math.max(...boardItems.map(b=>b.id),0)+1; }
+  if(d.matState) Object.assign(matState,d.matState);
+  if(d.customMaterials) customMaterials=d.customMaterials;
+  if(d.customMatSections){ customMatSections=d.customMatSections; cmsNextId=Math.max(...customMatSections.map(s=>s.id),0)+1; }
+  if(d.customMatState) Object.assign(customMatState,d.customMatState);
+  if(d.strategyNotes) Object.assign(strategyNotes,d.strategyNotes);
+  if(d.fixList) Object.assign(fixList,d.fixList);
+  if(d.flNextId) flNextId=d.flNextId;
+})();
+autoLoad(); // localStorage overrides seed if data exists
+idbLoadFiles().then(idbFiles=>{
+  // Merge IDB files only if LS didn't already have them (overflow case)
+  for(const sid in idbFiles.strategyFiles){
+    if(!strategyFiles[sid]||strategyFiles[sid].length===0){
+      strategyFiles[sid]=idbFiles.strategyFiles[sid];
+    }
+  }
+  for(const k in idbFiles.matFiles){
+    if(!matFiles[k]||matFiles[k].length===0) matFiles[k]=idbFiles.matFiles[k];
+  }
+  for(const k in idbFiles.phasePhotos){
+    if(!phasePhotos[k]||phasePhotos[k].length===0) phasePhotos[k]=idbFiles.phasePhotos[k];
+  }
+  renderBoard();
+  renderPhases();
+  renderMaterials();
+  renderMeetings();
+  renderStrategy();
+  updateGhBtn();
+});
+</script>
+</body>
+</html>
