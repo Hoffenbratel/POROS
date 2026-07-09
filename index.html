@@ -1851,7 +1851,7 @@ function openGhSetup(){
     +'<label style="font-size:11px;color:#888;font-weight:700;text-transform:uppercase">GitHub Repo</label>'
     +'<input id="ghRepoInput" type="text" value="'+repo+'" placeholder="owner/repo" style="width:100%;border:1px solid #ddd;border-radius:4px;padding:7px;font-size:13px;margin:4px 0 10px;box-sizing:border-box">'
     +'<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">'
-    +'<button onclick="document.getElementById('ghModal').remove()" style="padding:7px 14px;border:1px solid #ddd;border-radius:4px;background:white;cursor:pointer;font-size:13px">Cancel</button>'
+    +'<button onclick="document.getElementById(\"ghModal\").remove()" style="padding:7px 14px;border:1px solid #ddd;border-radius:4px;background:white;cursor:pointer;font-size:13px">Cancel</button>'
     +'<button onclick="saveGhSetup()" style="padding:7px 14px;background:#1a3a5c;color:white;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:600">Save</button>'
     +'</div></div>';
   document.body.appendChild(modal);
@@ -1901,14 +1901,14 @@ function renderNotesTab(prefix){
     const isOpen=cfg.open[s.id]!==false;
     const note=(cfg.notes[s.id]||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const files=cfg.files[s.id]||[];
-    const chips=files.map((f,fi)=>'<span style="display:inline-flex;align-items:center;gap:4px;background:#f0f4ff;border:1px solid #c0d8ee;border-radius:4px;padding:2px 7px;font-size:11px;cursor:pointer" onclick="openNoteFile(''+prefix+'',''+s.id+'','+fi+')">📎 '+f.name+' <span onclick="event.stopPropagation();delNoteFile(''+prefix+'',''+s.id+'','+fi+')" style="color:#aaa;font-size:12px;cursor:pointer">✕</span></span>').join('');
+    const chips=files.map((f,fi)=>'<span style="display:inline-flex;align-items:center;gap:4px;background:#f0f4ff;border:1px solid #c0d8ee;border-radius:4px;padding:2px 7px;font-size:11px;cursor:pointer" onclick="openNoteFile(\''+prefix+'\',\''+s.id+'\','+fi+')">📎 '+f.name+' <span onclick="event.stopPropagation();delNoteFile(\''+prefix+'\',\''+s.id+'\','+fi+')" style="color:#aaa;font-size:12px;cursor:pointer">✕</span></span>').join('');
     return '<div style="background:white;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.07);margin-bottom:8px;overflow:hidden;border:1px solid #eee">'
-      +'<div onclick="toggleNoteSection(''+prefix+'',''+s.id+'')" style="padding:11px 14px;font-weight:700;font-size:14px;color:#1a3a5c;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:#f8f8f8;border-bottom:1px solid #eee">'
+      +'<div onclick="toggleNoteSection(\''+prefix+'\',\''+s.id+'\')" style="padding:11px 14px;font-weight:700;font-size:14px;color:#1a3a5c;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:#f8f8f8;border-bottom:1px solid #eee">'
       +'<span>'+s.label+'</span><span style="font-size:12px;color:#aaa">'+(isOpen?'▲':'▼')+'</span></div>'
       +'<div id="notesec-'+key+'" style="display:'+(isOpen?'block':'none')+';padding:10px 12px">'
-      +'<textarea onchange="saveNoteSection(''+prefix+'',''+s.id+'',this.value)" style="width:100%;min-height:80px;border:1px solid #ddd;border-radius:4px;padding:7px;font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box" placeholder="'+s.placeholder+'">'+note+'</textarea>'
+      +'<textarea onchange="saveNoteSection(\''+prefix+'\',\''+s.id+'\',this.value)" style="width:100%;min-height:80px;border:1px solid #ddd;border-radius:4px;padding:7px;font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box" placeholder="'+s.placeholder+'">'+note+'</textarea>'
       +'<div style="margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">'
-      +'<label style="font-size:12px;color:#1a3a5c;cursor:pointer;border:1px solid #c0d8ee;border-radius:4px;padding:3px 8px;background:#f0f4ff">📎 Attach<input type="file" multiple style="display:none" onchange="uploadNoteFile(''+prefix+'',''+s.id+'',this)"></label>'
+      +'<label style="font-size:12px;color:#1a3a5c;cursor:pointer;border:1px solid #c0d8ee;border-radius:4px;padding:3px 8px;background:#f0f4ff">📎 Attach<input type="file" multiple style="display:none" onchange="uploadNoteFile(\''+prefix+'\',\''+s.id+'\',this)"></label>'
       +chips+'</div></div></div>';
   }).join('');
 }
